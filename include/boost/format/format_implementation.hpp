@@ -141,7 +141,7 @@ namespace boost {
 
     template< class Ch, class Tr>
     basic_format<Ch,Tr>& basic_format<Ch,Tr>:: clear_binds() {
-        // remove all binds, then clear_non_bound()
+        // remove all binds, then clear()
         bound_.resize(0);
         clear();
         return *this;
@@ -149,7 +149,7 @@ namespace boost {
 
     template< class Ch, class Tr>
     basic_format<Ch,Tr>& basic_format<Ch,Tr>:: clear_bind(int argN) {
-        // remove the bind of ONE argument then clear_non_bound()
+        // remove the bind of ONE argument then clear()
 
         if(argN<1 || argN > num_args_ || bound_.size()==0 || !bound_[argN-1] ) {
             if( exceptions() & io::out_of_range_bit )
@@ -157,7 +157,7 @@ namespace boost {
             else return *this;
         }
         bound_[argN-1]=false;
-        clear_non_bound();
+        clear();
         return *this;
     }
 
