@@ -386,14 +386,14 @@ namespace detail {
         while( (i1=buf.find(arg_mark,i1)) != string_t::npos ) {
             string_t & piece = (cur_item==0) ? prefix_ : items_[cur_item-1].appendix_;
             if( buf[i1+1] == buf[i1] ) { // escaped mark, '%%' 
-                piece.append(buf.begin()+i0, buf.begin()+i1+1);
+                piece += buf.substr(i0, i1+1-i0);
                 i1+=2; i0=i1;
                 continue; 
             }
             BOOST_ASSERT(  static_cast<unsigned int>(cur_item) < items_.size() || cur_item==0);
 
             if(i1!=i0)
-                piece.append(buf.begin()+i0, buf.begin()+i1);
+                piece += buf.substr(i0, i1-i0);
             ++i1;
             it = buf.begin()+i1;
             bool parse_ok = io::detail::parse_printf_directive(
@@ -419,7 +419,7 @@ namespace detail {
         // store the final piece of string
         {
             string_t & piece = (cur_item==0) ? prefix_ : items_[cur_item-1].appendix_;
-            piece.append(buf.begin()+i0, buf.end());
+            piece += buf.substr(i0);
         }
     
         if( !ordered_args) {
