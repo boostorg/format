@@ -1,8 +1,7 @@
 #include "boost/format.hpp"
 
 #define BOOST_INCLUDE_MAIN 
-//#include <boost/test/test_tools.hpp>
-#include <boost/detail/lightweight_test.hpp>
+#include <boost/test/test_tools.hpp>
 
 
 int test_main(int, char* [])
