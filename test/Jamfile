@@ -22,21 +22,21 @@ test-suite "format"
                 <lib>../../../libs/test/build/boost_test_exec_monitor
               : # args
               : # input files
-              : std::locale-support
+              : std::locale-support std::facet-support
         ]
 
         [ run format_test2.cpp 
                 <lib>../../../libs/test/build/boost_test_exec_monitor
               : # args
               : # input files
-              : std::locale-support
+              : std::locale-support std::facet-support
         ]
 
         [ run format_test_wstring.cpp 
                 <lib>../../../libs/test/build/boost_test_exec_monitor
               : # args
               : # input files
-              : std::locale-support
+              : std::locale-support std::facet-support
         ]
   ;
 }
