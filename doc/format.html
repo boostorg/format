@@ -26,10 +26,13 @@ user-defined types.
 <li><a href="#manipulators">Manipulators and the internal stream state</a> </li>
 <li><a href="#user-defined">User-defined types</a> </li>
 <li><a href="#exceptions">Exceptions</a></li>
+<li><a href="#performance">Performance</a></li>
+<li><a href="#extract">Class Interface Extract</a></li>
 <li><a href="#alternatives">Alternatives</a> </li>
 </ul>
+<a name="synopsis"></a>
 <hr>
-<H2>Synopsis</H2><a name="synopsis"></a>
+<H2>Synopsis</H2>
 <P>A format object is constructed from a format-string, and is then given arguments through 
 repeated calls to <i>operator%</i>.
 <br>
@@ -41,9 +44,9 @@ cout << boost::format("writing %1%,  x=%2% : %3%-th try") % "toto" % 40.23 % 50;
      // prints "writing toto,  x=40.230 : 50-th try"
 </PRE></BLOCKQUOTE>
 
+<a name="how_it_works"></a>
 <hr>
 <H2>How it works</H2>
-<a name="how_it_works"></a>
 <ol>
 <li>When you call <i>format(s)</i>, where s is the format-string, it constructs an object,
 which parses the format string and look for all directives in it and prepares internal structures
@@ -95,9 +98,9 @@ All in all, the format class translates a format-string  (with eventually printf
 into operations on an internal stream, and finally returns the result of the formatting,
 as a string, or directly into an output stream.
 
+<a name="examples"></a>
 <hr>
 <H2>Examples</H2>
-<a name="examples"></a>
 
 <BLOCKQUOTE><PRE>
 using namespace std;
@@ -209,9 +212,9 @@ shows the behaviour of the <b>format</b> library on user-defined types.
 </P>
 
 
+<a name="syntax"></a>
 <hr>
 <H2>Syntax</H2>
-<a name="syntax"></a>
 <P>
 <b>boost::format( </b> format-string <b> ) %</b> arg1 <b>%</b> arg2 <b>%</b> ... <b>%</b> argN
 
@@ -262,8 +265,8 @@ Thus, format accepts several forms of directives in format-strings :
 </UL>
     On top of the standard printf format specifications, new features were implemented, like centered alignment. See <a href="#new_directives">new format specification</a> for details.
 
-<h3>printf format specifications</h3>
 <a name="printf_directives"></a>
+<h3>printf format specifications</h3>
 <p> 
 The printf format specifications supported by Boost.format follows the Unix98
 <a href="http://www.opengroup.org/onlinepubs/7908799/xsh/fprintf.html">Open-group printf</a>
@@ -446,8 +449,8 @@ Also, printf 'l', 'L',  or 'h' modifiers (to indicate wide, long or short types)
 </li>
 </ul>
 
-<h3>new format-specifications</h3>
 <a name="new_directives"></a>
+<h3>new format-specifications</h3>
 <ul>
 <li> as stated in the flags table, centered and internal alignment flags (' <i>=</i> ', 
 and ' <i>_</i> ')  were added.
@@ -464,8 +467,8 @@ and ' <i>_</i> ')  were added.
 </li>
 </ul>
 
-<h2>Differences of behaviour vs printf</h2>
 <a name="printf_differences"></a>
+<h2>Differences of behaviour vs printf</h2>
 Suppose you have variables <i>x1, x2</i> (built_in types, supported by C's printf),
 <br> and a format string <i>s</i> intended for use with a printf function this way :
 <BLOCKQUOTE><PRE>
@@ -520,9 +523,9 @@ cout << formatter % x;
 unsigned int n = formatter.size();
 </PRE></BLOCKQUOTE>
 
+<a name="user-defined"></a>
 <hr>
 <h2>User-defined types output</h2>
-<a name="user-defined"></a>
 <p> 
 All flags which are translated into modification to the stream state 
 act recursively within user-defined types.
@@ -558,9 +561,10 @@ to handle the stream's width, alignment and <i>showpos</i> paramaters by itself.
 <A href="../example/sample_userType.cpp">sample_userType.cpp</A>.
 
 <p></p>
+
+<a name="manipulators"></a>
 <hr>
 <h3>Manipulators, and internal stream state</h3>
-<a name="manipulators"></a>
 <P>
 The internal stream state of <B>format</B> is saved before 
 and restored after output of an argument; therefore, the modifiers are not sticky and affect only
@@ -621,9 +625,9 @@ cout << format("%1$d %2% %1%\n") % group(hex, showbase, 40) % 50;
 </ul>
 
 
+<a name="exceptions"></a>
 <hr>
 <H2>Exceptions</H2>
-<a name="exceptions"></a>
 <p>
 Boost.format enforces a number of rules on the usage of format objects. The format-string must obeys 
 the syntax described above, the user must supply exactly the right number of arguments before outputting to the final destination, and if using modify_item or bind_arg, items and arguments index
@@ -699,9 +703,69 @@ cout << my_fmt(" _%2%_ _%1%_ \n") % 1 ;
 
 </PRE></BLOCKQUOTE>
 
-
+<a name="performance"></a>
 <hr>
-<H2>Extract</H2>
+<H2>A Note about performance</H2>
+<p>
+The performance of boost::format for formatting a few builtin type arguments with reordering can be compared
+to that of Posix-printf, and of the equivalent stream manual operations to give a measure
+of the overhead incurred.
+The result may greatly depend on the compiler, standard library implementation, and the precise
+choice of format-string and arguments. 
+</p>
+<p>
+Since common stream implementations eventually call functions of the printf family for the actual 
+formatting of numbers, in general printf will be noticeably faster than the direct stream operations 
+And due to to the reordering overhead (allocations to store the pieces of string,
+stream initialisation at each item formatting, ..) the
+direct stream operations would be faster than boost::format, 
+(one cas expect a ratio ranging from 2 to 5 or more)
+</p>
+<p>
+When iterated formattings are a performance bottleneck, performance can be slightly increased by parsing
+the format string into a format object, and copying it at each formatting, in the following way.
+</p>
+<BLOCKQUOTE><PRE>
+    const boost::format fmter(fstring);
+    dest << boost::format(fmter) % arg1 % arg2 % arg3 ;
+</PRE></BLOCKQUOTE>
+<p>
+As an example of performance results, the author measured the time of execution of iterated formattings
+with 4 different methods 
+</p>
+<ol>
+<li> posix printf </li>
+<li> manual stream output (to a dummy <i>nullStream</i> stream sending the bytes into oblivion)</li>
+<li> boost::format copied from a const object as shown above</li>
+<li> the straigt boost::format usage </li>
+</ol>
+<p>
+the test was compiled with g++-3.3.3 and the following timings were measured (in seconds, and ratios) :
+</p>
+<BLOCKQUOTE><PRE>
+string     fstring="%3$0#6x %1$20.10E %2$g %3$0+5d \n";
+double     arg1=45.23;
+double     arg2=12.34;
+int        arg3=23;
+
+- release mode :
+printf                 : 2.13
+nullStream             : 3.43,  = 1.61033 * printf
+boost::format copied   : 6.77,  = 3.1784  * printf ,  = 1.97376 * nullStream
+boost::format straight :10.67,  = 5.00939 * printf ,  = 3.11079 * nullStream
+
+- debug mode :
+printf                 : 2.12
+nullStream             : 3.69,  = 1.74057 * printf
+boost::format copied   :10.02,  = 4.72642 * printf ,  = 2.71545 * nullStream
+boost::format straight :17.03,  = 8.03302 * printf ,  = 4.61518 * nullStream
+</PRE></BLOCKQUOTE>
+
+
+<a name="extract"></a>
+<hr>
+<H2>Class Interface Extract</H2>
+
 <BLOCKQUOTE><PRE>namespace boost {
 
 template&lt;class charT, class Traits=std::char_traits&lt;charT&gt; &gt; 
@@ -714,6 +778,10 @@ public:
   basic_format(const charT* str, const std::locale & loc);
   basic_format(const string_t& s);
   basic_format(const string_t& s, const std::locale & loc);
+  basic_format& operator= (const basic_format& x);
+
+  void clear(); // reset buffers
+  basic_format& parse(const string_t&); // clears and parse a new format string
 
   string_t str() const;
   size_type size() const;
@@ -725,6 +793,10 @@ public:
   // dump buffers to ostream :
   friend std::basic_ostream&lt;charT, Traits&gt;& 
   operator&lt;&lt; &lt;&gt; ( std::basic_ostream&lt;charT, Traits&gt;& , basic_format& ); 
+
+   // Choosing which errors will throw exceptions :
+   unsigned char exceptions() const;
+   unsigned char exceptions(unsigned char newexcept);
 
 // ............  this is just an extract .......
 }; // basic_format
@@ -773,15 +845,17 @@ Precisely, <b>format</b> was designed to provide the following features :
     Rüdiger Loos' format.hpp and Karl Nelson's formatting classes.
 <HR>
 
-<P>February 19, 2002</P>
+<P>Revised  26 January, 2003</P>
 <p>
 <a href="http://validator.w3.org/check/referer"><img border="0"
           src="http://www.w3.org/Icons/valid-html40"
           alt="Valid HTML 4.0!" height="31" width="88"></a>
 </p>
-<P>© Copyright Samuel Krempp 2002. Permission to copy, use, modify, sell and 
-distribute this document is granted provided this copyright notice appears in 
-all copies. This document is provided "as is" without express or implied 
-warranty, and with no claim as to its suitability for any purpose.</P>
+<P>© Samuel Krempp 2002</p>
+<p> Use, modification, and distribution are subject to the Boost Software
+License, Version 1.0. (See accompanying file <a href="../../../LICENSE_1_0.txt">
+LICENSE_1_0.txt</a> or copy at <a href="http://www.boost.org/LICENSE_1_0.txt">
+www.boost.org/LICENSE_1_0.txt</a>)</p>
+
 <P></P>
 <P>&nbsp;</P></BODY></HTML>
