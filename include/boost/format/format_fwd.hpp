@@ -28,10 +28,11 @@ namespace boost {
 
 template<class charT, class Traits = BOOST_IO_STD char_traits<charT> > class basic_format;
 
-// specialisation for char / wchar_t :
 typedef basic_format<char >     format;
-typedef basic_format<wchar_t >  wformat;
 
+#if !defined(BOOST_NO_STD_WSTRING) && !defined(BOOST_NO_STD_WSTREAM)
+typedef basic_format<wchar_t >  wformat;
+#endif
 
 namespace io {
 enum format_error_bits { bad_format_string_bit = 1, 
