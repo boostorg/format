@@ -42,15 +42,17 @@ namespace boost {
     typedef basic_format<wchar_t >  wformat;
 #endif
 
+    template<class Ch, class Tr> 
+    std::basic_string<Ch, Tr>     str(const basic_format<Ch, Tr>& ) ;
+
 namespace io {
+    using ::boost::str; // it used to bed define in boost::io, keep compatibility 
+
     enum format_error_bits { bad_format_string_bit = 1, 
                              too_few_args_bit = 2, too_many_args_bit = 4,
                              out_of_range_bit = 8,
                              all_error_bits = 255, no_error_bits=0 };
                   
-    template<class Ch, class Tr> 
-    std::basic_string<Ch, Tr>     str(const basic_format<Ch, Tr>& ) ;
-
 } // namespace io
 
 

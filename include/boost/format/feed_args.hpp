@@ -245,7 +245,7 @@ namespace  {
 
     template<class Ch, class Tr, class T> 
     basic_format<Ch, Tr>&  feed(basic_format<Ch,Tr>& self, T x) {
-        if(self.dumped_) self.clear_non_bound();
+        if(self.dumped_) self.clear();
         distribute<Ch, Tr, T> (self, x);
         ++self.cur_arg_;
         if(self.bound_.size() != 0) {

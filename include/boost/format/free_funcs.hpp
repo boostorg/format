@@ -23,14 +23,12 @@
 
 namespace boost {
 
-namespace io {
     template<class Ch, class Tr> inline 
     std::basic_string<Ch, Tr> str(const basic_format<Ch, Tr>& f) {
         // adds up all pieces of strings and converted items, and return the formatted string
         return f.str();
     }
 
-}   // - namespace io
 
     template< class Ch, class Tr>
     BOOST_IO_STD basic_ostream<Ch, Tr>& 

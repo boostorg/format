@@ -25,7 +25,7 @@ namespace MyNS_ForOutput {
   using std::string;
   using std::endl; using std::flush;
 
-  using boost::format; using boost::io::str;
+  using boost::format; 
   using boost::io::group;
 }
 
@@ -34,16 +34,16 @@ namespace MyNS_Manips {
   using std::setw;
   using std::hex ;
   using std::dec ;
-  using std::showbase ;
-  using std::left ;
-  using std::right ;
-  using std::internal ;
+    // gcc-2.95 doesnt define those :
+//   using std::showbase ;
+//   using std::left ;
+//   using std::right ;
+//   using std::internal ;
 }
 
 int main(){
     using namespace MyNS_ForOutput;
     using namespace MyNS_Manips;
-
     
     // Reordering :
     cout << format("%1% %2% %3% %2% %1% \n") % "o" % "oo" % "O"; // 'simple' style.

@@ -90,14 +90,7 @@ namespace boost {
     basic_format<Ch, Tr>& basic_format<Ch, Tr>:: operator= (const basic_format& x) {
         if(this == &x)
             return *this;
-        items_ = x.items_;
-        prefix_ = x.prefix_;
-        bound_ = x.bound_;
-        exceptions_ =  x.exceptions_;
-        style_ =  x.style_; 
-        cur_arg_ =  x.cur_arg_; 
-        num_args_ =  x.num_args_;
-        dumped_ =  x.dumped_;
+        (basic_format(x)).swap(*this);
         return *this;
     }
 
@@ -119,15 +112,15 @@ namespace boost {
         if(items_.size() == 0)
             items_.assign( nbitems, format_item_t(fill) );
         else {
-            items_.resize(nbitems, format_item_t(fill));
             bound_.resize(0);
+            items_.resize(nbitems, format_item_t(fill));
             for(std::size_t i=0; i < nbitems; ++i)
-                items_[i].reset(fill); //  strings are resized, instead of reallocated
+                items_[i].reset(fill); //  strings are resized to "", instead of reallocated
         }
     }
 
     template< class Ch, class Tr>
-    basic_format<Ch,Tr>& basic_format<Ch,Tr>:: clear_non_bound() {
+    basic_format<Ch,Tr>& basic_format<Ch,Tr>:: clear() {
         // empty the string buffers (except bound arguments)
         // and make the format object ready for formatting a new set of arguments
 
@@ -140,16 +133,17 @@ namespace boost {
         cur_arg_=0; dumped_=false;
         // maybe first arg is bound:
         if(bound_.size() != 0) {
-            while(cur_arg_ < num_args_ && bound_[cur_arg_] )      ++cur_arg_;
+            while(cur_arg_ < num_args_ && bound_[cur_arg_] )
+                  ++cur_arg_;
         }
         return *this;
     }
 
     template< class Ch, class Tr>
-    basic_format<Ch,Tr>& basic_format<Ch,Tr>:: clear() {
+    basic_format<Ch,Tr>& basic_format<Ch,Tr>:: clear_binds() {
         // remove all binds, then clear_non_bound()
         bound_.resize(0);
-        clear_non_bound();
+        clear();
         return *this;
     }
 
@@ -177,14 +171,9 @@ namespace boost {
         if( cur_arg_ < num_args_)
             if( exceptions() & io::too_few_args_bit )
                 boost::throw_exception(io::too_few_args()); // not enough variables supplied
-
-        unsigned long sz = prefix_.size();
         unsigned long i;
-        for(i=0; i < items_.size(); ++i) 
-            sz += items_[i].res_.size() + items_[i].appendix_.size();
         string_t res;
-        res.reserve(sz);
-
+        res.reserve(size());
         res += prefix_;
         for(i=0; i < items_.size(); ++i) {
             const format_item_t& item = items_[i];
@@ -199,6 +188,20 @@ namespace boost {
         }
         return res;
     }
+    template< class Ch, class Tr>
+    typename basic_format<Ch, Tr>::string_t::size_type  basic_format<Ch,Tr>:: 
+    size () const {
+        std::streamsize sz = prefix_.size();
+        unsigned long i;
+        for(i=0; i < items_.size(); ++i) {
+            const format_item_t& item = items_[i];
+            sz += item.res_.size();
+            if( item.argN_ == format_item_t::argN_tabulation)
+                sz = std::max(sz, item.fmtstate_.width_);
+            sz +=  + item.appendix_.size();
+        }
+        return static_cast<typename string_t::size_type> (sz);
+    }
 
 namespace io {
 namespace detail {
@@ -207,9 +210,9 @@ namespace detail {
     basic_format<Ch, Tr>&  bind_arg_body( basic_format<Ch, Tr>& self, 
                                           int argN, const T& val) {
         // bind one argument to a fixed value
-        // this is persistent over clear_non_bound() calls, thus also over str() and <<
+        // this is persistent over clear() calls, thus also over str() and <<
         if(self.dumped_) 
-            self.clear_non_bound(); // needed because we will modify cur_arg_
+            self.clear(); // needed because we will modify cur_arg_
         if(argN<1 || argN > self.num_args_) {
             if( self.exceptions() & io::out_of_range_bit )
                 boost::throw_exception(io::out_of_range()); // arg not in range.

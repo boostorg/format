@@ -49,8 +49,8 @@ namespace boost {
         basic_format& operator= (const basic_format& x);
         void swap(basic_format& x);
 
-        basic_format& clear(); // empty all converted string buffers
-        basic_format& clear_non_bound(); // same, except the ones marked bound are left
+        basic_format& clear(); // empty all converted string buffers (except bound items)
+        basic_format& clear_binds(); // unbind all bound items, and call clear()
         basic_format& parse(const string_t&); // resets buffers and parse a new format string
 
         // pass arguments through those operators :
@@ -76,6 +76,8 @@ namespace boost {
         unsigned char exceptions(unsigned char newexcept);
 
         // final output
+        typename string_t::size_type 
+                 size() const;            // sum of the current string pieces sizes
         string_t str() const;
         friend BOOST_IO_STD basic_ostream<Ch, Tr>& 
 #if BOOST_WORKAROUND( BOOST_MSVC, <= 1300) 
