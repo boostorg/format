@@ -33,6 +33,7 @@ int test_main(int, char* [])
 {
     using namespace std;
     using boost::format;
+    using boost::str;
     using boost::io::group;
 
     Rational r(16,9);
