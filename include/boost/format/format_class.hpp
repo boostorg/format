@@ -37,6 +37,8 @@ namespace boost {
         typedef Ch  CharT;   // borland fails if we use Ch and Tr directly
         typedef Tr  Traits;  // in the body of the operator% template.
         typedef std::basic_string<Ch, Tr>                string_t;
+        typedef typename std::basic_string<Ch, Tr>::size_type size_type; 
+
         typedef io::basic_outsstream<Ch, Tr>             internal_stream_t;
 
         explicit basic_format(const Ch* str=NULL);
@@ -76,8 +78,7 @@ namespace boost {
         unsigned char exceptions(unsigned char newexcept);
 
         // final output
-        typename string_t::size_type 
-                 size() const;            // sum of the current string pieces sizes
+        size_type size() const;            // sum of the current string pieces sizes
         string_t str() const;
         friend BOOST_IO_STD basic_ostream<Ch, Tr>& 
 #if BOOST_WORKAROUND( BOOST_MSVC, <= 1300) 

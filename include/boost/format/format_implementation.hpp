@@ -189,7 +189,7 @@ namespace boost {
         return res;
     }
     template< class Ch, class Tr>
-    typename basic_format<Ch, Tr>::string_t::size_type  basic_format<Ch,Tr>:: 
+    typename basic_format<Ch, Tr>::size_type  basic_format<Ch,Tr>:: 
     size () const {
         std::streamsize sz = prefix_.size();
         unsigned long i;
@@ -200,7 +200,7 @@ namespace boost {
                 sz = std::max(sz, item.fmtstate_.width_);
             sz +=  + item.appendix_.size();
         }
-        return static_cast<typename string_t::size_type> (sz);
+        return static_cast<size_type> (sz);
     }
 
 namespace io {
