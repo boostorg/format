@@ -90,7 +90,7 @@ namespace boost {
     basic_format<Ch, Tr>& basic_format<Ch, Tr>:: operator= (const basic_format& x) {
         if(this == &x)
             return *this;
-        (basic_format(x)).swap(*this);
+        (basic_format<Ch, Tr>(x)).swap(*this);
         return *this;
     }
 
