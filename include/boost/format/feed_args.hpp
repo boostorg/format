@@ -173,7 +173,7 @@ namespace detail {
 
         basic_oaltstringstream<Ch, Tr, Alloc>  oss( &buf);
 
-        if(loc_p)
+        if(loc_p != NULL)
             oss.imbue(*loc_p);
         
         specs.fmtstate_.apply_on(oss, loc_p);
