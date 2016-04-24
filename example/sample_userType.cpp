@@ -142,42 +142,37 @@ int main(){
     Rational  r(16, 9);
 
     cout << "bonjour ! " << endl;
+    // "bonjour !"
 
     cout << r << endl;
-    //          prints : "16/9" 
+    // "16/9" 
 
     cout << showpos << r << ", " << 5 << endl;
-    //          prints : "+16/9, +5"
+    // "+16/9, +5"
 
     cout << format("%02d : [%0+9d] \n") % 1 % r ;
+    // "01 : [+016 / 0009]"
 
     cout << format("%02d : [%_+9d] \n") % 2 % Rational(9,160);
+    // "02 : [+9 / 160]"
 
     cout << format("%02d : [%_+9d] \n") % 3 % r;
-
+    // "03 : [+16 / 9]"
+		
     cout << format("%02d : [%_9d] \n") % 4 % Rational(8,1234);
+    // "04 : [8 / 1234]"
     
     cout << format("%02d : [%_9d] \n") % 5 % Rational(1234,8);
+    // "05 : [1234 / 8]"
 
     cout << format("%02d : [%09d] \n") % 6 % Rational(8,1234);
+    // "06 : [0008 / 1234]"
 
     cout << format("%02d : [%0+9d] \n") % 7 % Rational(1234,8);
+    // "07 : [+1234 / 008]"
 
     cout << format("%02d : [%0+9d] \n") % 8 % Rational(7,12345);
-
-    /* output :
-bonjour !
-16/9
-+16/9, +5
-01 : [+016/0009]
-02 : [+  9/ 160]
-03 : [+ 16/   9]
-04 : [   8/1234]
-05 : [1234/   8]
-06 : [0008/1234]
-07 : [+1234/008]
-08 : [+07/12345]
-    */
+    // "08 : [+07 / 12345]"
 
 
     cerr << "\n\nEverything went OK, exiting. \n";
