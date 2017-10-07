@@ -137,13 +137,13 @@ namespace boost {
         public:
             typedef Alloc  allocator_type;
             basic_oaltstringstream() 
-                : pbase_type(new stringbuf_t), stream_t(rdbuf()) 
+                : pbase_type(new stringbuf_t), stream_t(pbase_type::member.get())
                 { }
             basic_oaltstringstream(::boost::shared_ptr<stringbuf_t> buf) 
-                : pbase_type(buf), stream_t(rdbuf()) 
+                : pbase_type(buf), stream_t(pbase_type::member.get())
                 { }
             basic_oaltstringstream(stringbuf_t * buf) 
-                : pbase_type(buf, No_Op() ), stream_t(rdbuf()) 
+                : pbase_type(buf, No_Op() ), stream_t(pbase_type::member.get())
                 { }
             stringbuf_t * rdbuf() const 
                 { return pbase_type::member.get(); }
