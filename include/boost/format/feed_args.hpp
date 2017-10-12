@@ -118,12 +118,12 @@ namespace detail {
 
     template< class Ch, class Tr, class T>
     void call_put_head(BOOST_IO_STD basic_ostream<Ch, Tr> & os, const void* x) {
-        put_head(os, *(typename ::boost::remove_reference<T>::type*)x);
+        put_head(os, *(typename ::boost::remove_reference<const T>::type*)x);
     }
 
     template< class Ch, class Tr, class T>
     void call_put_last(BOOST_IO_STD basic_ostream<Ch, Tr> & os, const void* x) {
-        put_last(os, *(T*)x);
+        put_last(os, *(const T*)x);
     }
 
     template< class Ch, class Tr>
