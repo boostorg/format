@@ -19,6 +19,7 @@
 #include <boost/format/detail/compat_workarounds.hpp>
 #include <boost/utility/base_from_member.hpp>
 #include <boost/shared_ptr.hpp>
+#include <boost/config.hpp>
 #include <boost/assert.hpp>
 
 namespace boost {
@@ -62,7 +63,7 @@ namespace boost {
                                         = ::std::ios_base::in | ::std::ios_base::out)
                 : putend_(NULL), is_allocated_(false), mode_(mode) 
                 { dealloc(); str(s); }
-            virtual ~basic_altstringbuf() 
+            virtual ~basic_altstringbuf() BOOST_NOEXCEPT_OR_NOTHROW
                 { dealloc(); }
             using streambuf_t::pbase;
             using streambuf_t::pptr;
