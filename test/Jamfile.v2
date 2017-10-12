@@ -19,6 +19,7 @@ test-suite "format"
         [ run format_test3.cpp ]
         [ run format_test_wstring.cpp ]
         [ run format_test_enum.cpp ]
+        [ run format_test_exceptions.cpp ]
   ;
 }
 
