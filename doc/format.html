@@ -931,18 +931,18 @@ template&lt;class charT, class Traits=std::char_traits&lt;charT&gt; &gt;
 class basic_format 
 {
 public:
-  typedef std::basic_string&lt;charT, Traits&gt; string_t;
-  typedef typename string_t::size_type     size_type;
+  typedef std::basic_string&lt;charT, Traits&gt; string_type;
+  typedef typename string_type::size_type     size_type;
   basic_format(const charT* str);
   basic_format(const charT* str, const std::locale &amp; loc);
-  basic_format(const string_t&amp; s);
-  basic_format(const string_t&amp; s, const std::locale &amp; loc);
+  basic_format(const string_type&amp; s);
+  basic_format(const string_type&amp; s, const std::locale &amp; loc);
   basic_format&amp; operator= (const basic_format&amp; x);
 
   void clear(); // reset buffers
-  basic_format&amp; parse(const string_t&amp;); // clears and parse a new format string
+  basic_format&amp; parse(const string_type&amp;); // clears and parse a new format string
 
-  string_t str() const;
+  string_type str() const;
   size_type size() const;
 
   // pass arguments through those operators :
