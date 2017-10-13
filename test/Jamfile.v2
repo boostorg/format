@@ -11,15 +11,13 @@ project
     ;
 
 import testing ;
-{
 
 test-suite "format"
    :    [ run format_test1.cpp ]
         [ run format_test2.cpp ]
         [ run format_test3.cpp ]
         [ run format_test_wstring.cpp ]
-        [ run format_test_enum.cpp ]
+        [ run format_test_enum.cpp : : : <toolset>clang:<cxxflags>-Wno-unnamed-type-template-args ]
         [ run format_test_exceptions.cpp ]
-  ;
-}
+   ;
 

@@ -173,9 +173,11 @@ namespace detail {
 
         basic_oaltstringstream<Ch, Tr, Alloc>  oss( &buf);
 
+#if !defined(BOOST_NO_STD_LOCALE)
         if(loc_p != NULL)
             oss.imbue(*loc_p);
-        
+#endif
+
         specs.fmtstate_.apply_on(oss, loc_p);
 
         // the stream format state can be modified by manipulators in the argument :
