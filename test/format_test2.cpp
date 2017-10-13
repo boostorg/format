@@ -38,6 +38,7 @@ int test_main(int, char* [])
     using boost::str;
 
     Rational r(16,9);
+    const Rational cr(9,16);
 
     string s;
     s = str(format("%5%. %5$=6s . %1% format %5%, c'%3% %1% %2%.\n") 
@@ -49,8 +50,8 @@ int test_main(int, char* [])
     }
 
 
-    s = str(format("%+8d %-8d\n") % r % r );
-    if(s  != "  +16/+9 16/9    \n") {
+    s = str(format("%+8d %-8d\n") % r % cr );
+    if(s  != "  +16/+9 9/16    \n") {
       cerr << s;  
       BOOST_ERROR("(user-type) formatting result incorrect");
     }
