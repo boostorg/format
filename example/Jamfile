@@ -18,6 +18,7 @@ exe sample_advanced
 
 exe sample_new_features
     : sample_new_features.cpp
+    : <toolset>clang:<cxxflags>-Wno-invalid-source-encoding
     ;
 
 exe sample_userType

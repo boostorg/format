@@ -20,6 +20,7 @@
 #include <boost/throw_exception.hpp>
 #include <boost/assert.hpp>
 #include <boost/config.hpp>
+#include <boost/core/ignore_unused.hpp>
 
 
 namespace boost {
@@ -49,7 +50,7 @@ namespace detail {
 #if ! defined( BOOST_NO_LOCALE_ISDIGIT )
         return fac.is(std::ctype<Ch>::digit, c);
 # else
-        (void) fac;     // remove "unused parameter" warning
+        ignore_unused(fac);
         using namespace std;
         return isdigit(c) != 0; 
 #endif 
