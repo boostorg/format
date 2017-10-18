@@ -11,7 +11,7 @@
 // several suggestions from Jens Maurer
 
 // ------------------------------------------------------------------------------
-// bench_variants.cc :  do the same task, with snprintf, stream, and format
+// bench_variants.cc :  do the same task, with sprintf, stream, and format
 //                      and compare their times.
 
 // This benchmark is provided purely for information.
@@ -29,19 +29,9 @@
 #include <fstream>
 #include <cmath>   // floor
 #include <boost/timer.hpp>
+#include <vector>
 
 #include <boost/format.hpp>
-
-//#define knelson
-
-#ifdef knelson
-namespace KNelson {
-#include "boost/format3.hpp"
-}
-#endif
-
-
-
 
 // portable /dev/null stream equivalent, by James Kanze, http://www.gabi-soft.de
 class NulStreambuf : public std::streambuf
@@ -104,7 +94,7 @@ static const int        arg3=23;
 static const std::string res = 
 "0x0017     4.5230000000E+01 12.34 +0023 \n";
 //static const std::string res = "23.0000     4.5230000000E+01 12.34 23 \n";
-void test_snprintf();
+void test_sprintf();
 void test_nullstream();
 void test_opti_nullstream();
 void test_parsed_once_format();
@@ -112,10 +102,6 @@ void test_reused_format();
 void test_format();
 void test_try1();
 void test_try2();
-
-#ifdef knelson
-void test_format3();
-#endif
 
 int main(int argc, char * argv[]) {
     using namespace boost;
@@ -130,7 +116,7 @@ int main(int argc, char * argv[]) {
     }
 
     if(choices=="" || choices.find('p') !=npos)
-      test_snprintf();
+      test_sprintf();
     if(choices=="" || choices.find('n') !=npos)
       test_nullstream();
     if(choices=="" || choices.find('1') !=npos)
@@ -145,20 +131,19 @@ int main(int argc, char * argv[]) {
       test_try2();
     if(choices.find('o') !=npos)
       test_opti_nullstream();
-#ifdef knelson
-    if(choices=="" || choices.find('k') !=npos)
-      test_format3();
-#endif
     return 0;
 }
 
 
-void test_snprintf()
+void test_sprintf()
 {
     using namespace std;
 
-    // Check that snpintf is Unix98 compatible on the platform :
-    char * buf = new char[4000];
+    vector<char> bufr;
+    bufr.reserve(4000);
+    char *buf = &bufr[0];
+
+    // Check that sprintf is Unix98 compatible on the platform :
     sprintf(buf, fstring.c_str(), arg1, arg2, arg3);
     if( strncmp( buf, res.c_str(), res.size()) != 0 ) {
       cerr << endl << buf;
@@ -364,25 +349,3 @@ void test_format()
         << ",  = " << t / tstream << " * nullStream \n";
 }
 
- 
-#ifdef knelson
-void test_format3()
-{
-  using namespace std;
-  boost::io::basic_oaltstringstream<char> oss;
-  oss << KNelson::boost::format(fstring.c_str(), arg1, arg2, arg3);
-  if(oss.str() != res ) {
-    cerr << endl << oss.str();
-  }
-
-  boost::timer chrono;
-  for(int i=0; i<NTests; ++i) {
-    nullStream << KNelson::boost::format(fstring.c_str(), arg1, arg2, arg3);
-  }
-  double t = chrono.elapsed();
-  cout  << left << setw(20) <<"format3 time"<< right <<":" << setw(5) << t
-        << ",  = " << t / tpf << " * printf "
-        << ",  = " << t / tstream << " * nullStream \n" ;
-}
- 
-#endif
