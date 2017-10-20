@@ -863,27 +863,27 @@ cout &lt;&lt; my_fmt(" _%2%_ _%1%_ \n") % 1 ;
   incurred. The result may greatly depend on the compiler, standard library
   implementation, and the precise choice of format-string and arguments.</p>
 
-  <p>Since common stream implementations eventually call functions of the
-  printf family for the actual formatting of numbers, in general printf will
-  be noticeably faster than the direct stream operations And due to to the
+  <p>Common stream implementations eventually call functions of the
+  printf family for the actual formatting of numbers.  In general, printf
+  will be noticeably faster than the direct stream operations due to the
   reordering overhead (allocations to store the pieces of string, stream
-  initialisation at each item formatting, ..) the direct stream operations
-  would be faster than boost::format, (one cas expect a ratio ranging from 2
-  to 5 or more)</p>
+  initialisation at each item formatting, ..).  The direct stream operations
+  would be faster than boost::format - one can expect a ratio ranging from 2
+  to 5 or more.</p>
 
   <p>When iterated formattings are a performance bottleneck, performance can
   be slightly increased by parsing the format string into a format object,
-  and copying it at each formatting, in the following way.</p>
+  and copying it at each formatting, in the following way:</p>
 
   <blockquote>
     <pre>
     const boost::format fmter(fstring);
     dest &lt;&lt; boost::format(fmter) % arg1 % arg2 % arg3 ;
-</pre>
+    </pre>
   </blockquote>
 
   <p>As an example of performance results, the author measured the time of
-  execution of iterated formattings with 4 different methods</p>
+  execution of iterated formattings with 4 different methods:</p>
 
   <ol>
     <li>posix printf</li>
@@ -897,7 +897,7 @@ cout &lt;&lt; my_fmt(" _%2%_ _%1%_ \n") % 1 ;
   </ol>
 
   <p>the test was compiled with g++-3.3.3 and the following timings were
-  measured (in seconds, and ratios) :</p>
+  measured (in seconds, and ratios):</p>
 
   <blockquote>
     <pre>
@@ -931,18 +931,18 @@ template&lt;class charT, class Traits=std::char_traits&lt;charT&gt; &gt;
 class basic_format 
 {
 public:
-  typedef std::basic_string&lt;charT, Traits&gt; string_t;
-  typedef typename string_t::size_type     size_type;
+  typedef std::basic_string&lt;charT, Traits&gt; string_type;
+  typedef typename string_type::size_type     size_type;
   basic_format(const charT* str);
   basic_format(const charT* str, const std::locale &amp; loc);
-  basic_format(const string_t&amp; s);
-  basic_format(const string_t&amp; s, const std::locale &amp; loc);
+  basic_format(const string_type&amp; s);
+  basic_format(const string_type&amp; s, const std::locale &amp; loc);
   basic_format&amp; operator= (const basic_format&amp; x);
 
   void clear(); // reset buffers
-  basic_format&amp; parse(const string_t&amp;); // clears and parse a new format string
+  basic_format&amp; parse(const string_type&amp;); // clears and parse a new format string
 
-  string_t str() const;
+  string_type str() const;
   size_type size() const;
 
   // pass arguments through those operators :

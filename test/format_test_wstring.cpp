@@ -29,8 +29,16 @@ int test_main(int, char* [])
       BOOST_ERROR("Basic w-parsing Failed");
   if(str( wformat(L"%%##%#x ##%%1 %s00") % 20 % L"Escaped OK" ) != L"%##0x14 ##%1 Escaped OK00")
       BOOST_ERROR("Basic wp-parsing Failed") ;
-#endif // wformat tests
 
+  // testcase for https://svn.boost.org/trac10/ticket/7379 (for valgrind)
+  wformat wfmt(L"%1$.1f");
+  std::wstring ws = str(wfmt % 123.45f);
+  BOOST_CHECK_EQUAL(ws.compare(L"123.4"), 0);
+  wformat wfmt2(L"%1$.0f %%");
+  std::wstring ws2 = (wfmt2 % 123.45f).str();
+  BOOST_CHECK_EQUAL(ws2.compare(L"123 %"), 0);
+
+#endif // wformat tests
 
   return 0;
 }

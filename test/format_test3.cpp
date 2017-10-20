@@ -123,10 +123,12 @@ int test_main(int, char* [])
     // http://lists.boost.org/boost-users/2005/11/15454.php
     std::string l_param;
     std::string l_str = (boost::format("here is an empty string: %1%") % l_param).str(); 
+    BOOST_CHECK_EQUAL(std::string("here is an empty string: "), l_str);
 
     // testcase for SourceForge bug #1506914
     std::string arg; // empty string  
     s = str(format("%=8s") % arg);
+    BOOST_CHECK_EQUAL(std::string("        "), s);
 
     return 0;
 }
