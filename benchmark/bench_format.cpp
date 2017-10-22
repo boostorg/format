@@ -81,6 +81,8 @@ int NulStreambuf::overflow( int c ){
 
 // -------------------------------------------------------------------------------------
 
+namespace benchmark {
+
 static int NTests = 300000;
 
 //static std::stringstream nullStream;
@@ -94,6 +96,7 @@ static const int        arg3=23;
 static const std::string res = 
 "0x0017     4.5230000000E+01 12.34 +0023 \n";
 //static const std::string res = "23.0000     4.5230000000E+01 12.34 23 \n";
+
 void test_sprintf();
 void test_nullstream();
 void test_opti_nullstream();
@@ -102,38 +105,6 @@ void test_reused_format();
 void test_format();
 void test_try1();
 void test_try2();
-
-int main(int argc, char * argv[]) {
-    using namespace boost;
-    using namespace std;
-    const string::size_type  npos = string::npos;
-
-    string choices="";
-    if(1<argc) {
-      choices = (argv[1]); // profiling is easier launching only one.
-      NTests = 1000*1000;  // andmoreprecise with many iterations
-      cout << "choices (" << choices << ") \n";
-    }
-
-    if(choices=="" || choices.find('p') !=npos)
-      test_sprintf();
-    if(choices=="" || choices.find('n') !=npos)
-      test_nullstream();
-    if(choices=="" || choices.find('1') !=npos)
-      test_parsed_once_format();
-    if(choices=="" || choices.find('r') !=npos)
-      test_reused_format();
-    if(choices=="" || choices.find('f') !=npos)
-      test_format();
-    if(choices.find('t') !=npos)
-      test_try1();
-    if(choices.find('y') !=npos)
-      test_try2();
-    if(choices.find('o') !=npos)
-      test_opti_nullstream();
-    return 0;
-}
-
 
 void test_sprintf()
 {
@@ -347,5 +318,39 @@ void test_format()
   cout  << left << setw(20) <<"format time"<< right <<":" << setw(5) << t
         << ",  = " << t / tpf << " * printf "
         << ",  = " << t / tstream << " * nullStream \n";
+}
+
+} // benchmark
+
+int main(int argc, char * argv[]) {
+    using namespace benchmark;
+    using namespace boost;
+    using namespace std;
+    const string::size_type  npos = string::npos;
+
+    string choices = "";
+    if (1<argc) {
+        choices = (argv[1]); // profiling is easier launching only one.
+        NTests = 1000 * 1000;  // andmoreprecise with many iterations
+        cout << "choices (" << choices << ") \n";
+    }
+
+    if (choices == "" || choices.find('p') != npos)
+        test_sprintf();
+    if (choices == "" || choices.find('n') != npos)
+        test_nullstream();
+    if (choices == "" || choices.find('1') != npos)
+        test_parsed_once_format();
+    if (choices == "" || choices.find('r') != npos)
+        test_reused_format();
+    if (choices == "" || choices.find('f') != npos)
+        test_format();
+    if (choices.find('t') != npos)
+        test_try1();
+    if (choices.find('y') != npos)
+        test_try2();
+    if (choices.find('o') != npos)
+        test_opti_nullstream();
+    return 0;
 }
 

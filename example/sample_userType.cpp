@@ -14,7 +14,7 @@
 #include <iostream>
 #include <iomanip>
 #include "boost/format.hpp"
-
+#include <boost/cast.hpp>
 
 #if !(BOOST_WORKAROUND(__GNUC__, < 3) && defined(__STL_CONFIG_H) ) 
   // not for broken gcc stdlib
@@ -119,11 +119,11 @@ std::ostream& operator<<(std::ostream& os, const Rational& r) {
   else {
     if(! (os.flags() & std::ios_base::left)) { 
         // -> right align. (right bit is set, or no bit is set)
-        os << string(n, ' ');
+        os << string(boost::numeric_cast<std::string::size_type>(n), ' ');
     }
     os.write(oss.begin(), s3);
     if( os.flags() & std::ios_base::left ) {
-      os << string(n, ' ');
+      os << string(boost::numeric_cast<std::string::size_type>(n), ' ');
     }
   }
 
