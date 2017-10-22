@@ -6,7 +6,10 @@
 #  See www.boost.org/LICENSE_1_0.txt
 #
 
-project libs/format/benchmark ;
+project libs/format/benchmark 
+    : requirements
+	  <toolset>msvc:<define>_CRT_SECURE_NO_WARNINGS
+	;
 
 exe bench_format_no_locale
     : bench_format.cpp
