@@ -91,34 +91,34 @@ enum interop_datatype
     ID_NEGLNG           // negative long double
 };
 
-BOOST_CONSTEXPR_OR_CONST uint64_t        g_z   = 0;
-BOOST_CONSTEXPR_OR_CONST char            g_b   = 0x60;
-BOOST_CONSTEXPR_OR_CONST unsigned char   g_ub  = 0xA0;
-BOOST_CONSTEXPR_OR_CONST char            g_c   = 0x58;
-BOOST_CONSTEXPR_OR_CONST wint_t          g_wc  = L'X';          // 'X', but wide
-BOOST_CONSTEXPR_OR_CONST char *          g_s   = " string";     // skipws is on by default so let's test it
-BOOST_CONSTEXPR_OR_CONST wchar_t *       g_ws  = L"widestr";
-BOOST_CONSTEXPR_OR_CONST short           g_h   = numeric_limits<short>::min() + 12345;
-BOOST_CONSTEXPR_OR_CONST unsigned short  g_uh  = numeric_limits<unsigned short>::max() - 12345;
-BOOST_CONSTEXPR_OR_CONST int             g_i   = numeric_limits<int>::max() - 12345;
-BOOST_CONSTEXPR_OR_CONST unsigned int    g_ui  = numeric_limits<unsigned int>::max() - 12345;
-BOOST_CONSTEXPR_OR_CONST long            g_l   = numeric_limits<long>::max() - 12345;
-BOOST_CONSTEXPR_OR_CONST unsigned long   g_ul  = numeric_limits<unsigned long>::max() - 12345;
-BOOST_CONSTEXPR_OR_CONST int64_t         g_ll  = numeric_limits<int64_t>::max() - 12345;
-BOOST_CONSTEXPR_OR_CONST uint64_t        g_ull = numeric_limits<uint64_t>::max() - 12345;
-BOOST_CONSTEXPR_OR_CONST intmax_t        g_max = numeric_limits<intmax_t>::max() - 12345;
-BOOST_CONSTEXPR_OR_CONST size_t          g_sst = numeric_limits<size_t>::min() - 12345;
-BOOST_CONSTEXPR_OR_CONST size_t          g_st  = numeric_limits<size_t>::max() - 12345;
-BOOST_CONSTEXPR_OR_CONST ptrdiff_t       g_pt  = numeric_limits<ptrdiff_t>::max() - 12345;
-BOOST_CONSTEXPR_OR_CONST double          g_db  = 1234567.891234f;
-BOOST_CONSTEXPR_OR_CONST double          g_ndb = -1234567.891234f;
-BOOST_CONSTEXPR_OR_CONST long double     g_ldb = 6543211234567.891234l;
-BOOST_CONSTEXPR_OR_CONST long double     g_nld = -6543211234567.891234l;
+BOOST_CONSTEXPR const uint64_t        g_z   = 0;
+BOOST_CONSTEXPR const char            g_b   = 0x60;
+BOOST_CONSTEXPR const unsigned char   g_ub  = 0xA0;
+BOOST_CONSTEXPR const char            g_c   = 0x58;
+BOOST_CONSTEXPR const wint_t          g_wc  = L'X';          // 'X', but wide
+BOOST_CONSTEXPR const char *          g_s   = " string"; 
+BOOST_CONSTEXPR const wchar_t *       g_ws  = L"widestr";
+BOOST_CONSTEXPR const short           g_h   = numeric_limits<short>::min() + 12345;
+BOOST_CONSTEXPR const unsigned short  g_uh  = numeric_limits<unsigned short>::max() - 12345;
+BOOST_CONSTEXPR const int             g_i   = numeric_limits<int>::max() - 12345;
+BOOST_CONSTEXPR const unsigned int    g_ui  = numeric_limits<unsigned int>::max() - 12345;
+BOOST_CONSTEXPR const long            g_l   = numeric_limits<long>::max() - 12345;
+BOOST_CONSTEXPR const unsigned long   g_ul  = numeric_limits<unsigned long>::max() - 12345;
+BOOST_CONSTEXPR const int64_t         g_ll  = numeric_limits<int64_t>::max() - 12345;
+BOOST_CONSTEXPR const uint64_t        g_ull = numeric_limits<uint64_t>::max() - 12345;
+BOOST_CONSTEXPR const intmax_t        g_max = numeric_limits<intmax_t>::max() - 12345;
+BOOST_CONSTEXPR const size_t          g_sst = numeric_limits<size_t>::min() - 12345;
+BOOST_CONSTEXPR const size_t          g_st  = numeric_limits<size_t>::max() - 12345;
+BOOST_CONSTEXPR const ptrdiff_t       g_pt  = numeric_limits<ptrdiff_t>::max() - 12345;
+BOOST_CONSTEXPR const double          g_db  = 1234567.891234f;
+BOOST_CONSTEXPR const double          g_ndb = -1234567.891234f;
+BOOST_CONSTEXPR const long double     g_ldb = 6543211234567.891234l;
+BOOST_CONSTEXPR const long double     g_nld = -6543211234567.891234l;
 #if defined(INFINITY)
-BOOST_CONSTEXPR_OR_CONST double          g_inf = INFINITY;
+BOOST_CONSTEXPR const double          g_inf = INFINITY;
 #endif
 #if defined(NAN)
-BOOST_CONSTEXPR_OR_CONST double          g_nan = NAN;
+BOOST_CONSTEXPR const double          g_nan = NAN;
 #endif
 
 boost::array<const char *, 9> length_modifier = { { "hh", "h", "", "l", "ll", "j", "z", "t", "L" } };
