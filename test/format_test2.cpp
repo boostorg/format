@@ -11,11 +11,16 @@
 // ------------------------------------------------------------------------------
 
 #include "boost/format.hpp"
-#include <boost/algorithm/string/predicate.hpp>
+#include <boost/algorithm/string.hpp>
+#include <boost/config.hpp>
 #include <boost/predef.h>
 
 #include <iostream> 
 #include <iomanip>
+
+#if !defined(BOOST_NO_STD_LOCALE)
+#include <locale>
+#endif
 
 #define BOOST_INCLUDE_MAIN 
 #include <boost/test/test_tools.hpp>
@@ -31,6 +36,13 @@ std::ostream& operator<<( std::ostream& os, const Rational& r) {
   return os;
 }
 
+#if !defined(BOOST_NO_STD_LOCALE)
+// in C++03 this has to be globally defined or gcc complains
+struct custom_tf : std::numpunct<char> {
+    std::string do_truename()  const { return "POSITIVE"; }
+    std::string do_falsename() const { return "NEGATIVE"; }
+};
+#endif
 
 int test_main(int, char* [])
 {
@@ -144,6 +156,23 @@ int test_main(int, char* [])
     BOOST_CHECK_EQUAL((boost::format("%ju") % value).str(), "456");
     BOOST_CHECK_EQUAL((boost::format("%zu") % value).str(), "456");
     BOOST_CHECK(boost::starts_with((boost::format("%Lf") % value).str(), "456"));
+
+#if !defined(BOOST_NO_STD_LOCALE)
+    // boolalpha support
+    std::locale loc;
+    const std::numpunct<char>& punk(std::use_facet<std::numpunct<char> >(loc));
+
+    // Demonstrates how to modify the default string to something else
+    std::locale custom(std::locale(), new custom_tf);
+    boost::ignore_unused(locale::global(custom));
+    BOOST_CHECK_EQUAL((boost::format("%b") % false).str(), "NEGATIVE");
+    BOOST_CHECK_EQUAL((boost::format("%b") % true).str(), "POSITIVE");
+
+    // restore system default
+    locale::global(loc);
+    BOOST_CHECK_EQUAL((boost::format("%b") % false).str(), punk.falsename());
+    BOOST_CHECK_EQUAL((boost::format("%b") % true).str(), punk.truename());
+#endif
 
     return 0;
 }

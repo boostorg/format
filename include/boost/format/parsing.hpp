@@ -283,6 +283,11 @@ namespace detail {
 
         switch (wrap_narrow(fac, *start, 0))
         {
+            // Boolean
+            case 'b':
+                fpar->fmtstate_.flags_ |= std::ios_base::boolalpha;
+                break;
+
             // Decimal
             case 'u':
             case 'd':

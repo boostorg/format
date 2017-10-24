@@ -57,6 +57,10 @@ enum interop_datatype
     ID_UNDEF,           // undefined behavior according to the spec, so combination is not tested
     ID_NOTSUP,          // behavior is not supported and therefore not tested currently
 
+    // boolean type values:
+    ID_BOOLF,           // false
+    ID_BOOLT,           // true
+
     // string type values:
     ID_CHAR,            // single signed character
     ID_UCHAR,           // single unsigned character
@@ -91,9 +95,11 @@ enum interop_datatype
     ID_NEGLNG           // negative long double
 };
 
+BOOST_CONSTEXPR const bool            g_bf  = false;
+BOOST_CONSTEXPR const bool            g_bt  = true;
 BOOST_CONSTEXPR const uint64_t        g_z   = 0;
-BOOST_CONSTEXPR const char            g_b   = 0x60;
-BOOST_CONSTEXPR const unsigned char   g_ub  = 0xA0;
+BOOST_CONSTEXPR const char            g_by  = 0x60;
+BOOST_CONSTEXPR const unsigned char   g_uby = 0xA0;
 BOOST_CONSTEXPR const char            g_c   = 0x58;
 BOOST_CONSTEXPR const wint_t          g_wc  = L'X';          // 'X', but wide
 BOOST_CONSTEXPR const char *          g_s   = " string"; 
@@ -198,6 +204,10 @@ interop_row interop_matrix[] = {
       { 'G', { ID_UNDEF , ID_UNDEF , ID_NAN   , ID_NAN   , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_NAN    } },
       { 'G', { ID_UNDEF , ID_UNDEF , ID_ZERO  , ID_ZERO  , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_ZERO   } },
 
+    // boolalpha - not supported in snprintf per ISO C99 but is by boost::format so...
+      { 'b', { ID_UNDEF , ID_UNDEF , ID_BOOLF , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_UNDEF } },
+      { 'b', { ID_UNDEF , ID_UNDEF , ID_BOOLT , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_UNDEF } },
+
     // this is the terminator for conversion specifier loops:
       {  0 , { ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_UNDEF  } }
 };
@@ -211,8 +221,10 @@ std::string call_snprintf(const std::string& fmtStr, interop_datatype type)
     switch (type)
     {
         case ID_ZERO:   len = SNPRINTF(buf, BUFSIZ, fmtStr.c_str(), g_z  ); break;
-        case ID_BYTE:   len = SNPRINTF(buf, BUFSIZ, fmtStr.c_str(), g_b  ); break;
-        case ID_UBYTE:  len = SNPRINTF(buf, BUFSIZ, fmtStr.c_str(), g_ub ); break;
+        case ID_BOOLF:  len = SNPRINTF(buf, BUFSIZ, fmtStr.c_str(), g_bf ); break;
+        case ID_BOOLT:  len = SNPRINTF(buf, BUFSIZ, fmtStr.c_str(), g_bt ); break;
+        case ID_BYTE:   len = SNPRINTF(buf, BUFSIZ, fmtStr.c_str(), g_by ); break;
+        case ID_UBYTE:  len = SNPRINTF(buf, BUFSIZ, fmtStr.c_str(), g_uby); break;
         case ID_CHAR:   len = SNPRINTF(buf, BUFSIZ, fmtStr.c_str(), g_c  ); break;
         case ID_WCHAR:  len = SNPRINTF(buf, BUFSIZ, fmtStr.c_str(), g_wc ); break;
         case ID_STR:    len = SNPRINTF(buf, BUFSIZ, fmtStr.c_str(), g_s  ); break;
@@ -256,8 +268,10 @@ std::string call_format(const std::string& fmtStr, interop_datatype type)
     switch (type)
     {
         case ID_ZERO:   return ::boost::str(::boost::format(fmtStr) % g_z  );
-        case ID_BYTE:   return ::boost::str(::boost::format(fmtStr) % g_b  );
-        case ID_UBYTE:  return ::boost::str(::boost::format(fmtStr) % g_ub );
+        case ID_BOOLF:  return ::boost::str(::boost::format(fmtStr) % g_bf );
+        case ID_BOOLT:  return ::boost::str(::boost::format(fmtStr) % g_bt );
+        case ID_BYTE:   return ::boost::str(::boost::format(fmtStr) % g_by );
+        case ID_UBYTE:  return ::boost::str(::boost::format(fmtStr) % g_uby);
         case ID_CHAR:   return ::boost::str(::boost::format(fmtStr) % g_c  );
         case ID_WCHAR:  return ::boost::str(::boost::format(fmtStr) % g_wc );
         case ID_STR:    return ::boost::str(::boost::format(fmtStr) % g_s  );
