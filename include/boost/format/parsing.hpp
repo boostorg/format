@@ -133,6 +133,7 @@ namespace detail {
         bool in_brackets=false;
         Iter start0 = start;
         std::size_t fstring_size = last-start0+offset;
+        char mssiz = 0;
 
         if(start>= last) { // empty directive : this is a trailing %
                 maybe_throw_exception(exceptions, start-start0 + offset, fstring_size);
@@ -261,14 +262,54 @@ namespace detail {
                     // also note that the ptrdiff_t argument type 't' from C++11 is not honored
                     // because it was already in use as the tabulation specifier here
                     break;
+
+                // Microsoft extensions:
+                // https://msdn.microsoft.com/en-us/library/tcxf1dw6.aspx
+
+                case 'w':
+                    break;
+                case 'I':
+                    mssiz = 'I';
+                    break;
+                case '3':
+                    if (mssiz != 'I') {
+                        maybe_throw_exception(exceptions, start - start0 + offset, fstring_size);
+                        return true;
+                    }
+                    mssiz = '3';
+                    break;
+                case '2':
+                    if (mssiz != '3') {
+                        maybe_throw_exception(exceptions, start - start0 + offset, fstring_size);
+                        return true;
+                    }
+                    mssiz = 0x00;
+                    break;
+                case '6':
+                    if (mssiz != 'I') {
+                        maybe_throw_exception(exceptions, start - start0 + offset, fstring_size);
+                        return true;
+                    }
+                    mssiz = '6';
+                    break;
+                case '4':
+                    if (mssiz != '6') {
+                        maybe_throw_exception(exceptions, start - start0 + offset, fstring_size);
+                        return true;
+                    }
+                    mssiz = 0x00;
+                    break;
                 default:
+                    if (mssiz && mssiz == 'I') {
+                        mssiz = 0;
+                    }
                     goto parse_conversion_specification;
             }
             ++start;
         } // loop on argument type modifiers to pick up 'hh', 'll'
 
       parse_conversion_specification:
-        if (start >= last) {
+        if (start >= last || mssiz) {
             maybe_throw_exception(exceptions, start - start0 + offset, fstring_size);
             return true;
         }

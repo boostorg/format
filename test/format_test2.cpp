@@ -174,5 +174,17 @@ int test_main(int, char* [])
     BOOST_CHECK_EQUAL((boost::format("%b") % true).str(), punk.truename());
 #endif
 
+    // Support for microsoft argument type specifiers: 'w' (same as 'l'), I, I32, I64
+    BOOST_CHECK_EQUAL((boost::format("%wc") % '5').str(), "5");
+    BOOST_CHECK_EQUAL((boost::format("%Id") % 123).str(), "123");
+    BOOST_CHECK_EQUAL((boost::format("%I32d") % 456).str(), "456");
+    BOOST_CHECK_EQUAL((boost::format("%I64d") % 789).str(), "789");
+    BOOST_CHECK_THROW(boost::format("%I2d"), boost::io::bad_format_string);
+    BOOST_CHECK_THROW(boost::format("%I3d"), boost::io::bad_format_string);
+    BOOST_CHECK_THROW(boost::format("%I33d"), boost::io::bad_format_string);
+    BOOST_CHECK_THROW(boost::format("%I4d"), boost::io::bad_format_string);
+    BOOST_CHECK_THROW(boost::format("%I63d"), boost::io::bad_format_string);
+    BOOST_CHECK_THROW(boost::format("%I128d"), boost::io::bad_format_string);
+
     return 0;
 }
