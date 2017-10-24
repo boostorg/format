@@ -11,6 +11,8 @@
 // ------------------------------------------------------------------------------
 
 #include "boost/format.hpp"
+#include <boost/algorithm/string/predicate.hpp>
+#include <boost/predef.h>
 
 #include <iostream> 
 #include <iomanip>
@@ -114,6 +116,23 @@ int test_main(int, char* [])
       cerr << s;
       BOOST_ERROR("formatting error. (flag 0)");
     }
+
+    // actually testing floating point output is implementation 
+    // specific so we're just going to do minimal checking...
+    double dbl = 1234567.890123f;
+
+#if __cplusplus >= 201103L || BOOST_VERSION_NUMBER_MAJOR(BOOST_COMP_MSVC) >= 12
+    // msvc-12.0 and later have support for hexfloat but do not set __cplusplus to a C++11 value
+    BOOST_CHECK(boost::starts_with((boost::format("%A") % dbl).str(), "0X"));
+    BOOST_CHECK(boost::starts_with((boost::format("%a") % dbl).str(), "0x"));
+#endif
+
+    BOOST_CHECK(boost::contains((boost::format("%E") % dbl).str(), "E"));
+    BOOST_CHECK(boost::contains((boost::format("%e") % dbl).str(), "e"));
+    BOOST_CHECK(boost::contains((boost::format("%F") % dbl).str(), "."));
+    BOOST_CHECK(boost::contains((boost::format("%f") % dbl).str(), "."));
+    BOOST_CHECK(!(boost::format("%G") % dbl).str().empty());
+    BOOST_CHECK(!(boost::format("%g") % dbl).str().empty());
 
     return 0;
 }
