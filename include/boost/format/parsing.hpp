@@ -176,7 +176,7 @@ namespace detail {
                 ++start;
             } 
             else {
-                // non-positionnal directive
+                // non-positional directive
                 fpar->fmtstate_.width_ = n;
                 fpar->argN_  = format_item_t::argN_no_posit;
                 goto parse_precision;
@@ -185,38 +185,35 @@ namespace detail {
     
       parse_flags: 
         // handle flags
-        while ( start != last) { // as long as char is one of + - = _ # 0 l h   or ' '
-            // misc switches
+        while (start != last) { // as long as char is one of + - = _ # 0 or ' '
             switch ( wrap_narrow(fac, *start, 0)) {
-            case '\'' : break; // no effect yet. (painful to implement)
-            case 'l':
-            case 'h':  // short/long modifier : for printf-comaptibility (no action needed)
-                break;
-            case '-':
-                fpar->fmtstate_.flags_ |= std::ios_base::left;
-                break;
-            case '=':
-                fpar->pad_scheme_ |= format_item_t::centered;
-                break;
-            case '_':
-                fpar->fmtstate_.flags_ |= std::ios_base::internal;
-                break;
-            case ' ':
-                fpar->pad_scheme_ |= format_item_t::spacepad;
-                break;
-            case '+':
-                fpar->fmtstate_.flags_ |= std::ios_base::showpos;
-                break;
-            case '0':
-                fpar->pad_scheme_ |= format_item_t::zeropad;
-                // need to know alignment before really setting flags,
-                // so just add 'zeropad' flag for now, it will be processed later.
-                break;
-            case '#':
-                fpar->fmtstate_.flags_ |= std::ios_base::showpoint | std::ios_base::showbase;
-                break;
-            default:
-                goto parse_width;
+                case '\'': 
+                    break; // no effect yet. (painful to implement)
+                case '-':
+                    fpar->fmtstate_.flags_ |= std::ios_base::left;
+                    break;
+                case '=':
+                    fpar->pad_scheme_ |= format_item_t::centered;
+                    break;
+                case '_':
+                    fpar->fmtstate_.flags_ |= std::ios_base::internal;
+                    break;
+                case ' ':
+                    fpar->pad_scheme_ |= format_item_t::spacepad;
+                    break;
+                case '+':
+                    fpar->fmtstate_.flags_ |= std::ios_base::showpos;
+                    break;
+                case '0':
+                    fpar->pad_scheme_ |= format_item_t::zeropad;
+                    // need to know alignment before really setting flags,
+                    // so just add 'zeropad' flag for now, it will be processed later.
+                    break;
+                case '#':
+                    fpar->fmtstate_.flags_ |= std::ios_base::showpoint | std::ios_base::showbase;
+                    break;
+                default:
+                    goto parse_width;
             }
             ++start;
         } // loop on flag.
@@ -225,8 +222,8 @@ namespace detail {
             maybe_throw_exception(exceptions, start-start0+offset, fstring_size);
             return true; 
         }
+
       parse_width:
-        // handle width spec
         // first skip 'asterisk fields' :  *, or *N$
         if(*start == const_or_not(fac).widen( '*') )
             start = skip_asterisk(start, last, fac); 
@@ -251,13 +248,28 @@ namespace detail {
                 fpar->fmtstate_.precision_ =0;
         }
     
-        // handle  formatting-type flags :
-        while( start != last && ( *start== const_or_not(fac).widen( 'l') 
-                                  || *start== const_or_not(fac).widen( 'L') 
-                                  || *start== const_or_not(fac).widen( 'h')) )
+      // argument type modifiers
+        while (start != last) { // as long as char is one of 'h', 'l', 'j', 'z', or 'L'
+            switch (wrap_narrow(fac, *start, 0)) {
+                case 'h':
+                case 'l':
+                case 'j':
+                case 'z':
+                case 'L':
+                    // currently boost::format ignores argument type modifiers as it relies on
+                    // the type of the argument fed into it by operator %
+                    // also note that the ptrdiff_t argument type 't' from C++11 is not honored
+                    // because it was already in use as the tabulation specifier here
+                    break;
+                default:
+                    goto parse_conversion_specification;
+            }
             ++start;
-        if( start>=last) {
-            maybe_throw_exception(exceptions, start-start0+offset, fstring_size);
+        } // loop on argument type modifiers to pick up 'hh', 'll'
+
+      parse_conversion_specification:
+        if (start >= last) {
+            maybe_throw_exception(exceptions, start - start0 + offset, fstring_size);
             return true;
         }
 

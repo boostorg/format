@@ -134,5 +134,16 @@ int test_main(int, char* [])
     BOOST_CHECK(!(boost::format("%G") % dbl).str().empty());
     BOOST_CHECK(!(boost::format("%g") % dbl).str().empty());
 
+    // testing argument type parsing - remember argument types are ignored
+    // because operator % presents the argument type.
+    unsigned int value = 456;
+    BOOST_CHECK_EQUAL((boost::format("%hhu") % value).str(), "456");
+    BOOST_CHECK_EQUAL((boost::format("%hu") % value).str(), "456");
+    BOOST_CHECK_EQUAL((boost::format("%lu") % value).str(), "456");
+    BOOST_CHECK_EQUAL((boost::format("%llu") % value).str(), "456");
+    BOOST_CHECK_EQUAL((boost::format("%ju") % value).str(), "456");
+    BOOST_CHECK_EQUAL((boost::format("%zu") % value).str(), "456");
+    BOOST_CHECK(boost::starts_with((boost::format("%Lf") % value).str(), "456"));
+
     return 0;
 }
