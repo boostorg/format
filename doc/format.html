@@ -472,9 +472,10 @@ Jean, de Lattre de Tassigny,            +33 (0) 987 654 321
         allows the template to carry the argument type.  Therefore the classical
         printf style argument type is consumed and ignored.
         Argument-types <code>hh</code>, <code>h</code>, <code>l</code>, <code>ll</code>, <code>j</code>, 
-        <code>z</code>, and <code>L</code> are recognized.  Argument-type <code>t</code> from the
-        standard is not recognized as an argument type, as it has been in use as a
-        conversion specifier for tabular output for many years by <code>boost::format</code>.
+        <code>z</code>, and <code>L</code> are recognized, as are the Microsoft extensions <code>w</code>,
+        <code>I</code> (capital i), <code>I32</code>, and <code>I64</code>.  Argument-type <code>t</code> 
+        from the ISO C99 standard is not recognized as an argument type, as it has been in use as a
+        conversion specifier for tabular output for many years in <code>boost::format</code>.
     </li><br />
 
     <li>

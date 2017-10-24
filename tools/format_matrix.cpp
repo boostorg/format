@@ -127,15 +127,15 @@ BOOST_CONSTEXPR const double          g_inf = INFINITY;
 BOOST_CONSTEXPR const double          g_nan = NAN;
 #endif
 
-boost::array<const char *, 9> length_modifier = { { "hh", "h", "", "l", "ll", "j", "z", "t", "L" } };
-boost::array<const char *, 6> format_flags    = { { "", "-", "+", " ", "#", "0" } };
-boost::array<const char *, 6> minimum_width   = { { "", "1", "2", "5", "10", "20" } };           // TODO: , "*" } };
-boost::array<const char *, 7> precision       = { { "", ".", ".0", ".2", ".5", ".10", ".20" } }; // TODO: , ".*" } };
+boost::array<const char *, 12> length_modifier = { { "hh", "h", "", "l", "ll", "j", "z", "L", "w", "I", "I32", "I64" } };
+boost::array<const char *, 6>  format_flags    = { { "", "-", "+", " ", "#", "0" } };
+boost::array<const char *, 6>  minimum_width   = { { "", "1", "2", "5", "10", "20" } };           // TODO: , "*" } };
+boost::array<const char *, 7>  precision       = { { "", ".", ".0", ".2", ".5", ".10", ".20" } }; // TODO: , ".*" } };
 
 struct interop_row
 {
     char conversion_specifier;
-    interop_datatype datatype[9];
+    interop_datatype datatype[12];
 };
 
 // Each row represents a conversion specifier which is indicated in the first column
@@ -143,73 +143,74 @@ struct interop_row
 // The data in the cell is the value to pass into snprintf and format to see what comes out
 
 interop_row interop_matrix[] = {
-    //  spc,   hh       , h        , (none)   , l        , ll       , j        , z        , t        , L 
-      { 'c', { ID_UNDEF , ID_UNDEF , ID_CHAR  , ID_WCHAR , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_UNDEF  } },
-      { 's', { ID_UNDEF , ID_UNDEF , ID_STR   , ID_WSTR  , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_UNDEF  } },
+    //         |----------------------------------- ISO C99 ---------------------------------------|   |-------------- Microsoft --------------|
+    //  spc,   hh       , h        , (none)   , l        , ll       , j        , z        , L        , w        , I        , I32      , I64 
+      { 'c', { ID_UNDEF , ID_UNDEF , ID_CHAR  , ID_WCHAR , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_WCHAR , ID_UNDEF , ID_UNDEF , ID_UNDEF } },
+      { 's', { ID_UNDEF , ID_UNDEF , ID_STR   , ID_WSTR  , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_WSTR  , ID_UNDEF , ID_UNDEF , ID_UNDEF } },
 
-      { 'd', { ID_BYTE  , ID_SHORT , ID_INT   , ID_LONG  , ID_LLONG , ID_INTMAX, ID_SSIZET, ID_SPTRDF, ID_UNDEF  } },
-      { 'd', { ID_UBYTE , ID_USHORT, ID_UINT  , ID_ULONG , ID_ULLONG, ID_INTMAX, ID_SIZET , ID_PTRDIF, ID_UNDEF  } },
-      { 'd', { ID_ZERO  , ID_ZERO  , ID_ZERO  , ID_ZERO  , ID_ZERO  , ID_ZERO  , ID_ZERO  , ID_ZERO  , ID_UNDEF  } },
-      { 'i', { ID_BYTE  , ID_SHORT , ID_INT   , ID_LONG  , ID_LLONG , ID_INTMAX, ID_SSIZET, ID_SPTRDF, ID_UNDEF  } },
-      { 'i', { ID_UBYTE , ID_USHORT, ID_UINT  , ID_ULONG , ID_ULLONG, ID_INTMAX, ID_SIZET , ID_PTRDIF, ID_UNDEF  } },
-      { 'i', { ID_ZERO  , ID_ZERO  , ID_ZERO  , ID_ZERO  , ID_ZERO  , ID_ZERO  , ID_ZERO  , ID_ZERO  , ID_UNDEF  } },
+      { 'd', { ID_BYTE  , ID_SHORT , ID_INT   , ID_LONG  , ID_LLONG , ID_INTMAX, ID_SSIZET, ID_UNDEF , ID_UNDEF , ID_SPTRDF, ID_INT   , ID_LLONG } },
+      { 'd', { ID_UBYTE , ID_USHORT, ID_UINT  , ID_ULONG , ID_ULLONG, ID_INTMAX, ID_SIZET , ID_UNDEF , ID_UNDEF , ID_PTRDIF, ID_UINT  , ID_ULLONG} },
+      { 'd', { ID_ZERO  , ID_ZERO  , ID_ZERO  , ID_ZERO  , ID_ZERO  , ID_ZERO  , ID_ZERO  , ID_UNDEF , ID_UNDEF , ID_ZERO  , ID_ZERO  , ID_ZERO  } },
+      { 'i', { ID_BYTE  , ID_SHORT , ID_INT   , ID_LONG  , ID_LLONG , ID_INTMAX, ID_SSIZET, ID_UNDEF , ID_UNDEF , ID_SPTRDF, ID_INT   , ID_LLONG } },
+      { 'i', { ID_UBYTE , ID_USHORT, ID_UINT  , ID_ULONG , ID_ULLONG, ID_INTMAX, ID_SIZET , ID_UNDEF , ID_UNDEF , ID_PTRDIF, ID_UINT  , ID_ULLONG} },
+      { 'i', { ID_ZERO  , ID_ZERO  , ID_ZERO  , ID_ZERO  , ID_ZERO  , ID_ZERO  , ID_ZERO  , ID_UNDEF , ID_UNDEF , ID_ZERO  , ID_ZERO  , ID_ZERO  } },
 
-      { 'o', { ID_UBYTE , ID_USHORT, ID_UINT  , ID_ULONG , ID_ULLONG, ID_INTMAX, ID_SIZET , ID_PTRDIF, ID_UNDEF  } },
-      { 'o', { ID_ZERO  , ID_ZERO  , ID_ZERO  , ID_ZERO  , ID_ZERO  , ID_ZERO  , ID_ZERO  , ID_ZERO  , ID_UNDEF  } },
-      { 'x', { ID_UBYTE , ID_USHORT, ID_UINT  , ID_ULONG , ID_ULLONG, ID_INTMAX, ID_SIZET , ID_PTRDIF, ID_UNDEF  } },
-      { 'x', { ID_ZERO  , ID_ZERO  , ID_ZERO  , ID_ZERO  , ID_ZERO  , ID_ZERO  , ID_ZERO  , ID_ZERO  , ID_UNDEF  } },
-      { 'X', { ID_UBYTE , ID_USHORT, ID_UINT  , ID_ULONG , ID_ULLONG, ID_INTMAX, ID_SIZET , ID_PTRDIF, ID_UNDEF  } },
-      { 'X', { ID_ZERO  , ID_ZERO  , ID_ZERO  , ID_ZERO  , ID_ZERO  , ID_ZERO  , ID_ZERO  , ID_ZERO  , ID_UNDEF  } },
-      { 'u', { ID_UBYTE , ID_USHORT, ID_UINT  , ID_ULONG , ID_ULLONG, ID_INTMAX, ID_SIZET , ID_PTRDIF, ID_UNDEF  } },
-      { 'u', { ID_ZERO  , ID_ZERO  , ID_ZERO  , ID_ZERO  , ID_ZERO  , ID_ZERO  , ID_ZERO  , ID_ZERO  , ID_UNDEF  } },
+      { 'o', { ID_UBYTE , ID_USHORT, ID_UINT  , ID_ULONG , ID_ULLONG, ID_INTMAX, ID_SIZET , ID_UNDEF , ID_UNDEF , ID_PTRDIF, ID_UINT  , ID_ULLONG} },
+      { 'o', { ID_ZERO  , ID_ZERO  , ID_ZERO  , ID_ZERO  , ID_ZERO  , ID_ZERO  , ID_ZERO  , ID_UNDEF , ID_UNDEF , ID_ZERO  , ID_ZERO  , ID_ZERO  } },
+      { 'x', { ID_UBYTE , ID_USHORT, ID_UINT  , ID_ULONG , ID_ULLONG, ID_INTMAX, ID_SIZET , ID_UNDEF , ID_UNDEF , ID_PTRDIF, ID_UINT  , ID_ULLONG} },
+      { 'x', { ID_ZERO  , ID_ZERO  , ID_ZERO  , ID_ZERO  , ID_ZERO  , ID_ZERO  , ID_ZERO  , ID_UNDEF , ID_UNDEF , ID_ZERO  , ID_ZERO  , ID_ZERO  } },
+      { 'X', { ID_UBYTE , ID_USHORT, ID_UINT  , ID_ULONG , ID_ULLONG, ID_INTMAX, ID_SIZET , ID_UNDEF , ID_UNDEF , ID_PTRDIF, ID_UINT  , ID_ULLONG} },
+      { 'X', { ID_ZERO  , ID_ZERO  , ID_ZERO  , ID_ZERO  , ID_ZERO  , ID_ZERO  , ID_ZERO  , ID_UNDEF , ID_UNDEF , ID_ZERO  , ID_ZERO  , ID_ZERO  } },
+      { 'u', { ID_UBYTE , ID_USHORT, ID_UINT  , ID_ULONG , ID_ULLONG, ID_INTMAX, ID_SIZET , ID_UNDEF , ID_UNDEF , ID_PTRDIF, ID_UINT  , ID_ULLONG} },
+      { 'u', { ID_ZERO  , ID_ZERO  , ID_ZERO  , ID_ZERO  , ID_ZERO  , ID_ZERO  , ID_ZERO  , ID_UNDEF , ID_UNDEF , ID_ZERO  , ID_ZERO  , ID_ZERO  } },
 
-      { 'f', { ID_UNDEF , ID_UNDEF , ID_DOUBLE, ID_DOUBLE, ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_LNGDBL } },
-      { 'f', { ID_UNDEF , ID_UNDEF , ID_NEGDBL, ID_NEGDBL, ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_NEGLNG } },
-      { 'f', { ID_UNDEF , ID_UNDEF , ID_INF   , ID_INF   , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_INF    } },
-      { 'f', { ID_UNDEF , ID_UNDEF , ID_NAN   , ID_NAN   , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_NAN    } },
-      { 'f', { ID_UNDEF , ID_UNDEF , ID_ZERO  , ID_ZERO  , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_ZERO   } },
-      { 'F', { ID_UNDEF , ID_UNDEF , ID_DOUBLE, ID_DOUBLE, ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_LNGDBL } },
-      { 'F', { ID_UNDEF , ID_UNDEF , ID_NEGDBL, ID_NEGDBL, ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_NEGLNG } },
-      { 'F', { ID_UNDEF , ID_UNDEF , ID_INF   , ID_INF   , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_INF    } },
-      { 'F', { ID_UNDEF , ID_UNDEF , ID_NAN   , ID_NAN   , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_NAN    } },
-      { 'F', { ID_UNDEF , ID_UNDEF , ID_ZERO  , ID_ZERO  , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_ZERO   } },
-      { 'e', { ID_UNDEF , ID_UNDEF , ID_DOUBLE, ID_DOUBLE, ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_LNGDBL } },
-      { 'e', { ID_UNDEF , ID_UNDEF , ID_NEGDBL, ID_NEGDBL, ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_NEGLNG } },
-      { 'e', { ID_UNDEF , ID_UNDEF , ID_INF   , ID_INF   , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_INF    } },
-      { 'e', { ID_UNDEF , ID_UNDEF , ID_NAN   , ID_NAN   , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_NAN    } },
-      { 'e', { ID_UNDEF , ID_UNDEF , ID_ZERO  , ID_ZERO  , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_ZERO   } },
-      { 'E', { ID_UNDEF , ID_UNDEF , ID_DOUBLE, ID_DOUBLE, ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_LNGDBL } },
-      { 'E', { ID_UNDEF , ID_UNDEF , ID_NEGDBL, ID_NEGDBL, ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_NEGLNG } },
-      { 'E', { ID_UNDEF , ID_UNDEF , ID_INF   , ID_INF   , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_INF    } },
-      { 'E', { ID_UNDEF , ID_UNDEF , ID_NAN   , ID_NAN   , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_NAN    } },
-      { 'E', { ID_UNDEF , ID_UNDEF , ID_ZERO  , ID_ZERO  , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_ZERO   } },
-      { 'a', { ID_UNDEF , ID_UNDEF , ID_DOUBLE, ID_DOUBLE, ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_LNGDBL } },
-      { 'a', { ID_UNDEF , ID_UNDEF , ID_NEGDBL, ID_NEGDBL, ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_NEGLNG } },
-      { 'a', { ID_UNDEF , ID_UNDEF , ID_INF   , ID_INF   , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_INF    } },
-      { 'a', { ID_UNDEF , ID_UNDEF , ID_NAN   , ID_NAN   , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_NAN    } },
-      { 'a', { ID_UNDEF , ID_UNDEF , ID_ZERO  , ID_ZERO  , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_ZERO   } },
-      { 'A', { ID_UNDEF , ID_UNDEF , ID_DOUBLE, ID_DOUBLE, ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_LNGDBL } },
-      { 'A', { ID_UNDEF , ID_UNDEF , ID_NEGDBL, ID_NEGDBL, ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_NEGLNG } },
-      { 'A', { ID_UNDEF , ID_UNDEF , ID_INF   , ID_INF   , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_INF    } },
-      { 'A', { ID_UNDEF , ID_UNDEF , ID_NAN   , ID_NAN   , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_NAN    } },
-      { 'A', { ID_UNDEF , ID_UNDEF , ID_ZERO  , ID_ZERO  , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_ZERO   } },
-      { 'g', { ID_UNDEF , ID_UNDEF , ID_DOUBLE, ID_DOUBLE, ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_LNGDBL } },
-      { 'g', { ID_UNDEF , ID_UNDEF , ID_NEGDBL, ID_NEGDBL, ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_NEGLNG } },
-      { 'g', { ID_UNDEF , ID_UNDEF , ID_INF   , ID_INF   , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_INF    } },
-      { 'g', { ID_UNDEF , ID_UNDEF , ID_NAN   , ID_NAN   , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_NAN    } },
-      { 'g', { ID_UNDEF , ID_UNDEF , ID_ZERO  , ID_ZERO  , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_ZERO   } },
-      { 'G', { ID_UNDEF , ID_UNDEF , ID_DOUBLE, ID_DOUBLE, ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_LNGDBL } },
-      { 'G', { ID_UNDEF , ID_UNDEF , ID_NEGDBL, ID_NEGDBL, ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_NEGLNG } },
-      { 'G', { ID_UNDEF , ID_UNDEF , ID_INF   , ID_INF   , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_INF    } },
-      { 'G', { ID_UNDEF , ID_UNDEF , ID_NAN   , ID_NAN   , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_NAN    } },
-      { 'G', { ID_UNDEF , ID_UNDEF , ID_ZERO  , ID_ZERO  , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_ZERO   } },
+      { 'f', { ID_UNDEF , ID_UNDEF , ID_DOUBLE, ID_DOUBLE, ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_LNGDBL, ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_UNDEF } },
+      { 'f', { ID_UNDEF , ID_UNDEF , ID_NEGDBL, ID_NEGDBL, ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_NEGLNG, ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_UNDEF } },
+      { 'f', { ID_UNDEF , ID_UNDEF , ID_INF   , ID_INF   , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_INF   , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_UNDEF } },
+      { 'f', { ID_UNDEF , ID_UNDEF , ID_NAN   , ID_NAN   , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_NAN   , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_UNDEF } },
+      { 'f', { ID_UNDEF , ID_UNDEF , ID_ZERO  , ID_ZERO  , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_ZERO  , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_UNDEF } },
+      { 'F', { ID_UNDEF , ID_UNDEF , ID_DOUBLE, ID_DOUBLE, ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_LNGDBL, ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_UNDEF } },
+      { 'F', { ID_UNDEF , ID_UNDEF , ID_NEGDBL, ID_NEGDBL, ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_NEGLNG, ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_UNDEF } },
+      { 'F', { ID_UNDEF , ID_UNDEF , ID_INF   , ID_INF   , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_INF   , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_UNDEF } },
+      { 'F', { ID_UNDEF , ID_UNDEF , ID_NAN   , ID_NAN   , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_NAN   , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_UNDEF } },
+      { 'F', { ID_UNDEF , ID_UNDEF , ID_ZERO  , ID_ZERO  , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_ZERO  , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_UNDEF } },
+      { 'e', { ID_UNDEF , ID_UNDEF , ID_DOUBLE, ID_DOUBLE, ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_LNGDBL, ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_UNDEF } },
+      { 'e', { ID_UNDEF , ID_UNDEF , ID_NEGDBL, ID_NEGDBL, ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_NEGLNG, ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_UNDEF } },
+      { 'e', { ID_UNDEF , ID_UNDEF , ID_INF   , ID_INF   , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_INF   , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_UNDEF } },
+      { 'e', { ID_UNDEF , ID_UNDEF , ID_NAN   , ID_NAN   , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_NAN   , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_UNDEF } },
+      { 'e', { ID_UNDEF , ID_UNDEF , ID_ZERO  , ID_ZERO  , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_ZERO  , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_UNDEF } },
+      { 'E', { ID_UNDEF , ID_UNDEF , ID_DOUBLE, ID_DOUBLE, ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_LNGDBL, ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_UNDEF } },
+      { 'E', { ID_UNDEF , ID_UNDEF , ID_NEGDBL, ID_NEGDBL, ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_NEGLNG, ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_UNDEF } },
+      { 'E', { ID_UNDEF , ID_UNDEF , ID_INF   , ID_INF   , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_INF   , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_UNDEF } },
+      { 'E', { ID_UNDEF , ID_UNDEF , ID_NAN   , ID_NAN   , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_NAN   , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_UNDEF } },
+      { 'E', { ID_UNDEF , ID_UNDEF , ID_ZERO  , ID_ZERO  , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_ZERO  , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_UNDEF } },
+      { 'a', { ID_UNDEF , ID_UNDEF , ID_DOUBLE, ID_DOUBLE, ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_LNGDBL, ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_UNDEF } },
+      { 'a', { ID_UNDEF , ID_UNDEF , ID_NEGDBL, ID_NEGDBL, ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_NEGLNG, ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_UNDEF } },
+      { 'a', { ID_UNDEF , ID_UNDEF , ID_INF   , ID_INF   , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_INF   , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_UNDEF } },
+      { 'a', { ID_UNDEF , ID_UNDEF , ID_NAN   , ID_NAN   , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_NAN   , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_UNDEF } },
+      { 'a', { ID_UNDEF , ID_UNDEF , ID_ZERO  , ID_ZERO  , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_ZERO  , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_UNDEF } },
+      { 'A', { ID_UNDEF , ID_UNDEF , ID_DOUBLE, ID_DOUBLE, ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_LNGDBL, ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_UNDEF } },
+      { 'A', { ID_UNDEF , ID_UNDEF , ID_NEGDBL, ID_NEGDBL, ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_NEGLNG, ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_UNDEF } },
+      { 'A', { ID_UNDEF , ID_UNDEF , ID_INF   , ID_INF   , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_INF   , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_UNDEF } },
+      { 'A', { ID_UNDEF , ID_UNDEF , ID_NAN   , ID_NAN   , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_NAN   , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_UNDEF } },
+      { 'A', { ID_UNDEF , ID_UNDEF , ID_ZERO  , ID_ZERO  , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_ZERO  , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_UNDEF } },
+      { 'g', { ID_UNDEF , ID_UNDEF , ID_DOUBLE, ID_DOUBLE, ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_LNGDBL, ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_UNDEF } },
+      { 'g', { ID_UNDEF , ID_UNDEF , ID_NEGDBL, ID_NEGDBL, ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_NEGLNG, ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_UNDEF } },
+      { 'g', { ID_UNDEF , ID_UNDEF , ID_INF   , ID_INF   , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_INF   , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_UNDEF } },
+      { 'g', { ID_UNDEF , ID_UNDEF , ID_NAN   , ID_NAN   , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_NAN   , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_UNDEF } },
+      { 'g', { ID_UNDEF , ID_UNDEF , ID_ZERO  , ID_ZERO  , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_ZERO  , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_UNDEF } },
+      { 'G', { ID_UNDEF , ID_UNDEF , ID_DOUBLE, ID_DOUBLE, ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_LNGDBL, ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_UNDEF } },
+      { 'G', { ID_UNDEF , ID_UNDEF , ID_NEGDBL, ID_NEGDBL, ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_NEGLNG, ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_UNDEF } },
+      { 'G', { ID_UNDEF , ID_UNDEF , ID_INF   , ID_INF   , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_INF   , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_UNDEF } },
+      { 'G', { ID_UNDEF , ID_UNDEF , ID_NAN   , ID_NAN   , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_NAN   , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_UNDEF } },
+      { 'G', { ID_UNDEF , ID_UNDEF , ID_ZERO  , ID_ZERO  , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_ZERO  , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_UNDEF } },
 
     // boolalpha - not supported in snprintf per ISO C99 but is by boost::format so...
-      { 'b', { ID_UNDEF , ID_UNDEF , ID_BOOLF , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_UNDEF } },
-      { 'b', { ID_UNDEF , ID_UNDEF , ID_BOOLT , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_UNDEF } },
+      { 'b', { ID_UNDEF , ID_UNDEF , ID_BOOLF , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_UNDEF } },
+      { 'b', { ID_UNDEF , ID_UNDEF , ID_BOOLT , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_UNDEF } },
 
     // this is the terminator for conversion specifier loops:
-      {  0 , { ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_UNDEF  } }
+      {  0 , { ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_UNDEF , ID_UNDEF } },
 };
 
 std::string call_snprintf(const std::string& fmtStr, interop_datatype type)
