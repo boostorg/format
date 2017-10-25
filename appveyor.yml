@@ -85,9 +85,7 @@ install:
   - git submodule update -q --init tools/build
   - git submodule update -q --init tools/inspect
   - xcopy /s /e /q %APPVEYOR_BUILD_FOLDER% libs\%SELF%
-  # for tool subdir (not scanned by depinst at this time) copy cpp files to pick up deps
-  - xcopy libs\%SELF%\tools\*.cpp libs\%SELF%\test
-  - python tools/boostdep/depinst/depinst.py %SELF%
+  - python tools/boostdep/depinst/depinst.py --include benchmark --include tools %SELF%
   - cmd /c bootstrap
   - b2 headers
 
