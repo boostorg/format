@@ -53,8 +53,8 @@ install:
   - export BOOST_ROOT="`pwd`"
   - export PATH="`pwd`":$PATH 
   # for tools subdir (not scanned by depinst at this time) copy cpp files to pick up deps
-  - cp libs/$SELF/tools/*.cpp libs/$SELF/test
-  - python tools/boostdep/depinst/depinst.py $SELF
+  # cp libs/$SELF/tools/*.cpp libs/$SELF/test
+  - python tools/boostdep/depinst/depinst.py --include benchmark --include tools $SELF
   - ./bootstrap.sh
   - ./b2 headers
 
