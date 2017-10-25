@@ -186,5 +186,11 @@ int test_main(int, char* [])
     BOOST_CHECK_THROW(boost::format("%I63d"), boost::io::bad_format_string);
     BOOST_CHECK_THROW(boost::format("%I128d"), boost::io::bad_format_string);
 
+    // issue-36 volatile (and const) keyword
+    volatile int vint = 1234567;
+    BOOST_CHECK_EQUAL((boost::format("%1%") % vint).str(), "1234567");
+    volatile const int vcint = 7654321;
+    BOOST_CHECK_EQUAL((boost::format("%1%") % vcint).str(), "7654321");
+
     return 0;
 }
