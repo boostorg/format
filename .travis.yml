@@ -46,13 +46,13 @@ install:
   - cd ..
   - git clone -b $TRAVIS_BRANCH --depth 1 https://github.com/boostorg/boost.git boost-root
   - cd boost-root
-  - git submodule update --init tools/boostdep
-  - git submodule update --init tools/build
-  - git submodule update --init tools/inspect
+  - git submodule update -q --init tools/boostdep
+  - git submodule update -q --init tools/build
+  - git submodule update -q --init tools/inspect
   - cp -r $TRAVIS_BUILD_DIR/* libs/$SELF
   - export BOOST_ROOT="`pwd`"
   - export PATH="`pwd`":$PATH 
-  - python tools/boostdep/depinst/depinst.py $SELF
+  - python tools/boostdep/depinst/depinst.py --include benchmark --include example --include tools $SELF
   - ./bootstrap.sh
   - ./b2 headers
 
@@ -71,7 +71,7 @@ branches:
 script:
   - |-
     echo "using $TOOLSET : : $COMPILER : <cxxflags>-std=$CXXSTD ;" > ~/user-config.jam
-  - ./b2 libs/$SELF toolset=$TOOLSET $CXXFLAGS $LINKFLAGS $B2_ADDRESS_MODEL $B2_LINK $B2_THREADING $B2_VARIANT -j3
+  - ./b2 libs/$SELF toolset=$TOOLSET $CXXFLAGS $LINKFLAGS $TESTFLAGS $B2_ADDRESS_MODEL $B2_LINK $B2_THREADING $B2_VARIANT -j3
 
 jobs:
   include:
@@ -99,14 +99,17 @@ jobs:
             - ubuntu-toolchain-r-test
     - os: linux
       env: 
+        - COMMENT="clang-5 valgrind"
         - TOOLSET=clang 
         - COMPILER=clang++-5.0
         - CXXSTD=c++17
+        - TESTFLAGS=testing.launcher=valgrind
       addons:
         apt:
           packages:
             - clang-5.0
             - g++-7
+            - valgrind
           sources:
             - llvm-toolchain-trusty-5.0
             - ubuntu-toolchain-r-test
@@ -116,11 +119,11 @@ jobs:
         - TOOLSET=clang
         - CXXSTD=c++03
 
-    - os: osx
-      osx_image: xcode9.1
-      env:
-        - TOOLSET=clang
-        - CXXSTD=c++03
+    # - os: osx
+    # osx_image: xcode9.1
+    # env:
+    #   - TOOLSET=clang
+    #   - CXXSTD=c++03
 
     # Coverage build - for projects that build a library
     # - os: linux

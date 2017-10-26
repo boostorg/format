@@ -22,7 +22,6 @@
 #include <boost/config.hpp>
 #include <boost/core/ignore_unused.hpp>
 
-
 namespace boost {
 namespace io {
 namespace detail {
@@ -134,6 +133,7 @@ namespace detail {
         bool in_brackets=false;
         Iter start0 = start;
         std::size_t fstring_size = last-start0+offset;
+        char mssiz = 0;
 
         if(start>= last) { // empty directive : this is a trailing %
                 maybe_throw_exception(exceptions, start-start0 + offset, fstring_size);
@@ -177,7 +177,7 @@ namespace detail {
                 ++start;
             } 
             else {
-                // non-positionnal directive
+                // non-positional directive
                 fpar->fmtstate_.width_ = n;
                 fpar->argN_  = format_item_t::argN_no_posit;
                 goto parse_precision;
@@ -186,38 +186,35 @@ namespace detail {
     
       parse_flags: 
         // handle flags
-        while ( start != last) { // as long as char is one of + - = _ # 0 l h   or ' '
-            // misc switches
+        while (start != last) { // as long as char is one of + - = _ # 0 or ' '
             switch ( wrap_narrow(fac, *start, 0)) {
-            case '\'' : break; // no effect yet. (painful to implement)
-            case 'l':
-            case 'h':  // short/long modifier : for printf-comaptibility (no action needed)
-                break;
-            case '-':
-                fpar->fmtstate_.flags_ |= std::ios_base::left;
-                break;
-            case '=':
-                fpar->pad_scheme_ |= format_item_t::centered;
-                break;
-            case '_':
-                fpar->fmtstate_.flags_ |= std::ios_base::internal;
-                break;
-            case ' ':
-                fpar->pad_scheme_ |= format_item_t::spacepad;
-                break;
-            case '+':
-                fpar->fmtstate_.flags_ |= std::ios_base::showpos;
-                break;
-            case '0':
-                fpar->pad_scheme_ |= format_item_t::zeropad;
-                // need to know alignment before really setting flags,
-                // so just add 'zeropad' flag for now, it will be processed later.
-                break;
-            case '#':
-                fpar->fmtstate_.flags_ |= std::ios_base::showpoint | std::ios_base::showbase;
-                break;
-            default:
-                goto parse_width;
+                case '\'': 
+                    break; // no effect yet. (painful to implement)
+                case '-':
+                    fpar->fmtstate_.flags_ |= std::ios_base::left;
+                    break;
+                case '=':
+                    fpar->pad_scheme_ |= format_item_t::centered;
+                    break;
+                case '_':
+                    fpar->fmtstate_.flags_ |= std::ios_base::internal;
+                    break;
+                case ' ':
+                    fpar->pad_scheme_ |= format_item_t::spacepad;
+                    break;
+                case '+':
+                    fpar->fmtstate_.flags_ |= std::ios_base::showpos;
+                    break;
+                case '0':
+                    fpar->pad_scheme_ |= format_item_t::zeropad;
+                    // need to know alignment before really setting flags,
+                    // so just add 'zeropad' flag for now, it will be processed later.
+                    break;
+                case '#':
+                    fpar->fmtstate_.flags_ |= std::ios_base::showpoint | std::ios_base::showbase;
+                    break;
+                default:
+                    goto parse_width;
             }
             ++start;
         } // loop on flag.
@@ -226,8 +223,8 @@ namespace detail {
             maybe_throw_exception(exceptions, start-start0+offset, fstring_size);
             return true; 
         }
+
       parse_width:
-        // handle width spec
         // first skip 'asterisk fields' :  *, or *N$
         if(*start == const_or_not(fac).widen( '*') )
             start = skip_asterisk(start, last, fac); 
@@ -252,13 +249,68 @@ namespace detail {
                 fpar->fmtstate_.precision_ =0;
         }
     
-        // handle  formatting-type flags :
-        while( start != last && ( *start== const_or_not(fac).widen( 'l') 
-                                  || *start== const_or_not(fac).widen( 'L') 
-                                  || *start== const_or_not(fac).widen( 'h')) )
+      // argument type modifiers
+        while (start != last) { // as long as char is one of 'h', 'l', 'j', 'z', or 'L'
+            switch (wrap_narrow(fac, *start, 0)) {
+                case 'h':
+                case 'l':
+                case 'j':
+                case 'z':
+                case 'L':
+                    // currently boost::format ignores argument type modifiers as it relies on
+                    // the type of the argument fed into it by operator %
+                    // also note that the ptrdiff_t argument type 't' from C++11 is not honored
+                    // because it was already in use as the tabulation specifier here
+                    break;
+
+                // Microsoft extensions:
+                // https://msdn.microsoft.com/en-us/library/tcxf1dw6.aspx
+
+                case 'w':
+                    break;
+                case 'I':
+                    mssiz = 'I';
+                    break;
+                case '3':
+                    if (mssiz != 'I') {
+                        maybe_throw_exception(exceptions, start - start0 + offset, fstring_size);
+                        return true;
+                    }
+                    mssiz = '3';
+                    break;
+                case '2':
+                    if (mssiz != '3') {
+                        maybe_throw_exception(exceptions, start - start0 + offset, fstring_size);
+                        return true;
+                    }
+                    mssiz = 0x00;
+                    break;
+                case '6':
+                    if (mssiz != 'I') {
+                        maybe_throw_exception(exceptions, start - start0 + offset, fstring_size);
+                        return true;
+                    }
+                    mssiz = '6';
+                    break;
+                case '4':
+                    if (mssiz != '6') {
+                        maybe_throw_exception(exceptions, start - start0 + offset, fstring_size);
+                        return true;
+                    }
+                    mssiz = 0x00;
+                    break;
+                default:
+                    if (mssiz && mssiz == 'I') {
+                        mssiz = 0;
+                    }
+                    goto parse_conversion_specification;
+            }
             ++start;
-        if( start>=last) {
-            maybe_throw_exception(exceptions, start-start0+offset, fstring_size);
+        } // loop on argument type modifiers to pick up 'hh', 'll'
+
+      parse_conversion_specification:
+        if (start >= last || mssiz) {
+            maybe_throw_exception(exceptions, start - start0 + offset, fstring_size);
             return true;
         }
 
@@ -266,84 +318,105 @@ namespace detail {
             ++start;
             return true;
         }
-        switch ( wrap_narrow(fac, *start, 0) ) {
-        case 'X':
-            fpar->fmtstate_.flags_ |= std::ios_base::uppercase;
-            BOOST_FALLTHROUGH;
-        case 'p': // pointer => set hex.
-        case 'x':
-            fpar->fmtstate_.flags_ &= ~std::ios_base::basefield;
-            fpar->fmtstate_.flags_ |= std::ios_base::hex;
-            break;
 
-        case 'o':
-            fpar->fmtstate_.flags_ &= ~std::ios_base::basefield;
-            fpar->fmtstate_.flags_ |=  std::ios_base::oct;
-            break;
+        // The default flags are "dec" and "skipws"
+        // so if changing the base, need to unset basefield first
 
-        case 'E':
-            fpar->fmtstate_.flags_ |=  std::ios_base::uppercase;
-            BOOST_FALLTHROUGH;
-        case 'e':
-            fpar->fmtstate_.flags_ &= ~std::ios_base::floatfield;
-            fpar->fmtstate_.flags_ |=  std::ios_base::scientific;
+        switch (wrap_narrow(fac, *start, 0))
+        {
+            // Boolean
+            case 'b':
+                fpar->fmtstate_.flags_ |= std::ios_base::boolalpha;
+                break;
 
-            fpar->fmtstate_.flags_ &= ~std::ios_base::basefield;
-            fpar->fmtstate_.flags_ |=  std::ios_base::dec;
-            break;
-      
-        case 'f':
-            fpar->fmtstate_.flags_ &= ~std::ios_base::floatfield;
-            fpar->fmtstate_.flags_ |=  std::ios_base::fixed;
-            BOOST_FALLTHROUGH;
-        case 'u':
-        case 'd':
-        case 'i':
-            fpar->fmtstate_.flags_ &= ~std::ios_base::basefield;
-            fpar->fmtstate_.flags_ |=  std::ios_base::dec;
-            break;
+            // Decimal
+            case 'u':
+            case 'd':
+            case 'i':
+                // Defaults are sufficient
+                break;
 
-        case 'T':
-            ++start;
-            if( start >= last)
+            // Hex
+            case 'X':
+                fpar->fmtstate_.flags_ |= std::ios_base::uppercase;
+                BOOST_FALLTHROUGH;
+            case 'x':
+            case 'p': // pointer => set hex.
+                fpar->fmtstate_.flags_ &= ~std::ios_base::basefield;
+                fpar->fmtstate_.flags_ |= std::ios_base::hex;
+                break;
+
+            // Octal
+            case 'o':
+                fpar->fmtstate_.flags_ &= ~std::ios_base::basefield;
+                fpar->fmtstate_.flags_ |= std::ios_base::oct;
+                break;
+
+            // Floating
+            case 'A':
+                fpar->fmtstate_.flags_ |= std::ios_base::uppercase;
+                BOOST_FALLTHROUGH;
+            case 'a':
+                fpar->fmtstate_.flags_ &= ~std::ios_base::basefield;
+                fpar->fmtstate_.flags_ |= std::ios_base::fixed;
+                fpar->fmtstate_.flags_ |= std::ios_base::scientific;
+                break;
+            case 'E':
+                fpar->fmtstate_.flags_ |= std::ios_base::uppercase;
+                BOOST_FALLTHROUGH;
+            case 'e':
+                fpar->fmtstate_.flags_ |= std::ios_base::scientific;
+                break; 
+            case 'F':
+                fpar->fmtstate_.flags_ |= std::ios_base::uppercase;
+                BOOST_FALLTHROUGH;
+            case 'f':
+                fpar->fmtstate_.flags_ |= std::ios_base::fixed;
+                break;
+            case 'G':
+                fpar->fmtstate_.flags_ |= std::ios_base::uppercase;
+                BOOST_FALLTHROUGH;
+            case 'g':
+                // default flags are correct here
+                break;
+
+            // Tabulation (a boost::format extension)
+            case 'T':
+                ++start;
+                if( start >= last)
+                    maybe_throw_exception(exceptions, start-start0+offset, fstring_size);
+                else
+                    fpar->fmtstate_.fill_ = *start;
+                fpar->pad_scheme_ |= format_item_t::tabulation;
+                fpar->argN_ = format_item_t::argN_tabulation; 
+                break;
+            case 't': 
+                fpar->fmtstate_.fill_ = const_or_not(fac).widen( ' ');
+                fpar->pad_scheme_ |= format_item_t::tabulation;
+                fpar->argN_ = format_item_t::argN_tabulation; 
+                break;
+
+            // Character
+            case 'C':
+            case 'c': 
+                fpar->truncate_ = 1;
+                break;
+
+            // String
+            case 'S':
+            case 's': 
+                if(precision_set) // handle truncation manually, with own parameter.
+                    fpar->truncate_ = fpar->fmtstate_.precision_;
+                fpar->fmtstate_.precision_ = 6; // default stream precision.
+                break;
+
+            // %n is insecure and ignored by boost::format
+            case 'n' :  
+                fpar->argN_ = format_item_t::argN_ignored;
+                break;
+
+            default: 
                 maybe_throw_exception(exceptions, start-start0+offset, fstring_size);
-            else
-                fpar->fmtstate_.fill_ = *start;
-            fpar->pad_scheme_ |= format_item_t::tabulation;
-            fpar->argN_ = format_item_t::argN_tabulation; 
-            break;
-        case 't': 
-            fpar->fmtstate_.fill_ = const_or_not(fac).widen( ' ');
-            fpar->pad_scheme_ |= format_item_t::tabulation;
-            fpar->argN_ = format_item_t::argN_tabulation; 
-            break;
-
-        case 'G':
-            fpar->fmtstate_.flags_ |= std::ios_base::uppercase;
-            break;
-        case 'g': // 'g' conversion is default for floats.
-            fpar->fmtstate_.flags_ &= ~std::ios_base::basefield;
-            fpar->fmtstate_.flags_ |=  std::ios_base::dec;
-
-            // CLEAR all floatield flags, so stream will CHOOSE
-            fpar->fmtstate_.flags_ &= ~std::ios_base::floatfield; 
-            break;
-
-        case 'C':
-        case 'c': 
-            fpar->truncate_ = 1;
-            break;
-        case 'S':
-        case 's': 
-            if(precision_set) // handle truncation manually, with own parameter.
-                fpar->truncate_ = fpar->fmtstate_.precision_;
-            fpar->fmtstate_.precision_ = 6; // default stream precision.
-            break;
-        case 'n' :  
-            fpar->argN_ = format_item_t::argN_ignored;
-            break;
-        default: 
-            maybe_throw_exception(exceptions, start-start0+offset, fstring_size);
         }
         ++start;
 

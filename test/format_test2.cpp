@@ -11,9 +11,16 @@
 // ------------------------------------------------------------------------------
 
 #include "boost/format.hpp"
+#include <boost/algorithm/string.hpp>
+#include <boost/config.hpp>
+#include <boost/predef.h>
 
 #include <iostream> 
 #include <iomanip>
+
+#if !defined(BOOST_NO_STD_LOCALE)
+#include <locale>
+#endif
 
 #define BOOST_INCLUDE_MAIN 
 #include <boost/test/test_tools.hpp>
@@ -29,6 +36,13 @@ std::ostream& operator<<( std::ostream& os, const Rational& r) {
   return os;
 }
 
+#if !defined(BOOST_NO_STD_LOCALE)
+// in C++03 this has to be globally defined or gcc complains
+struct custom_tf : std::numpunct<char> {
+    std::string do_truename()  const { return "POSITIVE"; }
+    std::string do_falsename() const { return "NEGATIVE"; }
+};
+#endif
 
 int test_main(int, char* [])
 {
@@ -114,6 +128,69 @@ int test_main(int, char* [])
       cerr << s;
       BOOST_ERROR("formatting error. (flag 0)");
     }
+
+    // actually testing floating point output is implementation 
+    // specific so we're just going to do minimal checking...
+    double dbl = 1234567.890123f;
+
+#if __cplusplus >= 201103L || BOOST_VERSION_NUMBER_MAJOR(BOOST_COMP_MSVC) >= 12
+    // msvc-12.0 and later have support for hexfloat but do not set __cplusplus to a C++11 value
+    BOOST_CHECK(boost::starts_with((boost::format("%A") % dbl).str(), "0X"));
+    BOOST_CHECK(boost::starts_with((boost::format("%a") % dbl).str(), "0x"));
+#endif
+
+    BOOST_CHECK(boost::contains((boost::format("%E") % dbl).str(), "E"));
+    BOOST_CHECK(boost::contains((boost::format("%e") % dbl).str(), "e"));
+    BOOST_CHECK(boost::contains((boost::format("%F") % dbl).str(), "."));
+    BOOST_CHECK(boost::contains((boost::format("%f") % dbl).str(), "."));
+    BOOST_CHECK(!(boost::format("%G") % dbl).str().empty());
+    BOOST_CHECK(!(boost::format("%g") % dbl).str().empty());
+
+    // testing argument type parsing - remember argument types are ignored
+    // because operator % presents the argument type.
+    unsigned int value = 456;
+    BOOST_CHECK_EQUAL((boost::format("%hhu") % value).str(), "456");
+    BOOST_CHECK_EQUAL((boost::format("%hu") % value).str(), "456");
+    BOOST_CHECK_EQUAL((boost::format("%lu") % value).str(), "456");
+    BOOST_CHECK_EQUAL((boost::format("%llu") % value).str(), "456");
+    BOOST_CHECK_EQUAL((boost::format("%ju") % value).str(), "456");
+    BOOST_CHECK_EQUAL((boost::format("%zu") % value).str(), "456");
+    BOOST_CHECK(boost::starts_with((boost::format("%Lf") % value).str(), "456"));
+
+#if !defined(BOOST_NO_STD_LOCALE)
+    // boolalpha support
+    std::locale loc;
+    const std::numpunct<char>& punk(std::use_facet<std::numpunct<char> >(loc));
+
+    // Demonstrates how to modify the default string to something else
+    std::locale custom(std::locale(), new custom_tf);
+    boost::ignore_unused(locale::global(custom));
+    BOOST_CHECK_EQUAL((boost::format("%b") % false).str(), "NEGATIVE");
+    BOOST_CHECK_EQUAL((boost::format("%b") % true).str(), "POSITIVE");
+
+    // restore system default
+    locale::global(loc);
+    BOOST_CHECK_EQUAL((boost::format("%b") % false).str(), punk.falsename());
+    BOOST_CHECK_EQUAL((boost::format("%b") % true).str(), punk.truename());
+#endif
+
+    // Support for microsoft argument type specifiers: 'w' (same as 'l'), I, I32, I64
+    BOOST_CHECK_EQUAL((boost::format("%wc") % '5').str(), "5");
+    BOOST_CHECK_EQUAL((boost::format("%Id") % 123).str(), "123");
+    BOOST_CHECK_EQUAL((boost::format("%I32d") % 456).str(), "456");
+    BOOST_CHECK_EQUAL((boost::format("%I64d") % 789).str(), "789");
+    BOOST_CHECK_THROW(boost::format("%I2d"), boost::io::bad_format_string);
+    BOOST_CHECK_THROW(boost::format("%I3d"), boost::io::bad_format_string);
+    BOOST_CHECK_THROW(boost::format("%I33d"), boost::io::bad_format_string);
+    BOOST_CHECK_THROW(boost::format("%I4d"), boost::io::bad_format_string);
+    BOOST_CHECK_THROW(boost::format("%I63d"), boost::io::bad_format_string);
+    BOOST_CHECK_THROW(boost::format("%I128d"), boost::io::bad_format_string);
+
+    // issue-36 volatile (and const) keyword
+    volatile int vint = 1234567;
+    BOOST_CHECK_EQUAL((boost::format("%1%") % vint).str(), "1234567");
+    volatile const int vcint = 7654321;
+    BOOST_CHECK_EQUAL((boost::format("%1%") % vcint).str(), "7654321");
 
     return 0;
 }

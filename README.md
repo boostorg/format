@@ -23,6 +23,7 @@ Branch          | Travis | Appveyor | Coverity | Coveralls | Regression Tests
 * **examples** - Various use case examples
 * **include** - Interface headers of Boost.Format
 * **test** - Boost.Format unit tests
+* **tools** - Development tools
 
 ### More information
 
