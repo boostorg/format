@@ -338,6 +338,7 @@ write_header()
 void
 log(const std::string& spec, bool ok, const std::string& result)
 {
+    boost::io::ios_all_saver saver(g_os);
     g_os << setw(20) << right << spec << "\t"
          << (ok ? "OK " : "ERR") << "\t" << "\"" << result << "\"" << endl;
 }
