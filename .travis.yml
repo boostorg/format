@@ -14,9 +14,12 @@
 #    ci/codecov.sh is used to run a profiling build and upload results to codecov.io
 # 2. Customize the compilers and language levels you want.  Default is C++03.
 # 3. Update the global B2 environment settings to your liking.
-# 4. If you want to enable Coverity Scan, you need to provide the environment
+# 4. If you have more than include/, src/, and test/ directories then
+#    add them to the depinst.py line as "--include tools" for tools/ (you
+#    can put multiple --include on the command line).
+# 5. If you want to enable Coverity Scan, you need to provide the environment
 #    variables COVERITY_SCAN_TOKEN and COVERITY_SCAN_NOTIFICATION_EMAIL.  
-# 5. Enable pull request builds in your boostorg/<library> account.
+# 6. Enable pull request builds in your boostorg/<library> account.
 #
 # That's it - the script will do everything else for you.
 
@@ -104,7 +107,7 @@ jobs:
             - llvm-toolchain-trusty-5.0
             - ubuntu-toolchain-r-test
 
-  # cppcheck in trusty is VERY old (1.6.2) need 1.7.0 or later to avoid errors with operator %
+  # cppcheck in trusty is VERY old (1.6.2) and canot handle operator% properly (need 1.7.0 or later)
   # - os: linux
   #   env:
   #     - COMMENT=cppcheck
@@ -113,7 +116,7 @@ jobs:
   #       packages:
   #         - cppcheck
   #   script:
-  #     - cppcheck -I. --std=c++03 --enable=all --error-exitcode=1 --quiet libs/$SELF
+  #     - cppcheck -I. --std=c++03 --enable=all --error-exitcode=1 --quiet --force libs/$SELF
 
     - os: linux
       env:
@@ -133,14 +136,12 @@ jobs:
       env: 
         - COMMENT=CodeCov
         - TOOLSET=gcc-7
-        - B2_VARIANT=variant=profile
-        - CXXFLAGS=cxxflags=--coverage
-        - LINKFLAGS=linkflags=--coverage
-        - CODECOV=1
       addons:
         apt:
           packages:
+            - gcc-7
             - g++-7
+            - lcov
           sources:
             - ubuntu-toolchain-r-test
       script:
