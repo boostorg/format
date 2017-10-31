@@ -1,9 +1,12 @@
-coverage:
-  range: "85...100"
+codecov:
+  disable_default_path_fixes: true
 
 fixes:
-  - "*/boost-root/boost/::include/boost/"
-  - "*/boost-root/libs/format/::"
+  - home/travis/build/boost/::include/boost/
+  - home/travis/build/*/*/::
+      
+coverage:
+  range: "85...100"
 
 parsers:
   gcov:
