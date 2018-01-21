@@ -10,9 +10,10 @@
 
 // ------------------------------------------------------------------------------
 
-#include "boost/format.hpp"
 #include <boost/algorithm/string.hpp>
 #include <boost/config.hpp>
+#include <boost/detail/lightweight_test.hpp>
+#include <boost/format.hpp>
 #include <boost/predef.h>
 
 #include <iostream>
@@ -21,10 +22,6 @@
 #if !defined(BOOST_NO_STD_LOCALE)
 #include <locale>
 #endif
-
-#define BOOST_INCLUDE_MAIN
-#include <boost/test/test_tools.hpp>
-
 
 struct Rational {
   int n,d;
@@ -44,7 +41,7 @@ struct custom_tf : std::numpunct<char> {
 };
 #endif
 
-int test_main(int, char* [])
+int main(int, char* [])
 {
     using namespace std;
     using boost::format;
@@ -135,27 +132,27 @@ int test_main(int, char* [])
 
 #if (__cplusplus >= 201103L) || (BOOST_VERSION_NUMBER_MAJOR(BOOST_COMP_MSVC) >= 12)
     // msvc-12.0 and later have support for hexfloat but do not set __cplusplus to a C++11 value
-    BOOST_CHECK(boost::starts_with((boost::format("%A") % dbl).str(), "0X"));
-    BOOST_CHECK(boost::starts_with((boost::format("%a") % dbl).str(), "0x"));
+    BOOST_TEST(boost::starts_with((boost::format("%A") % dbl).str(), "0X"));
+    BOOST_TEST(boost::starts_with((boost::format("%a") % dbl).str(), "0x"));
 #endif
 
-    BOOST_CHECK(boost::contains((boost::format("%E") % dbl).str(), "E"));
-    BOOST_CHECK(boost::contains((boost::format("%e") % dbl).str(), "e"));
-    BOOST_CHECK(boost::contains((boost::format("%F") % dbl).str(), "."));
-    BOOST_CHECK(boost::contains((boost::format("%f") % dbl).str(), "."));
-    BOOST_CHECK(!(boost::format("%G") % dbl).str().empty());
-    BOOST_CHECK(!(boost::format("%g") % dbl).str().empty());
+    BOOST_TEST(boost::contains((boost::format("%E") % dbl).str(), "E"));
+    BOOST_TEST(boost::contains((boost::format("%e") % dbl).str(), "e"));
+    BOOST_TEST(boost::contains((boost::format("%F") % dbl).str(), "."));
+    BOOST_TEST(boost::contains((boost::format("%f") % dbl).str(), "."));
+    BOOST_TEST(!(boost::format("%G") % dbl).str().empty());
+    BOOST_TEST(!(boost::format("%g") % dbl).str().empty());
 
     // testing argument type parsing - remember argument types are ignored
     // because operator % presents the argument type.
     unsigned int value = 456;
-    BOOST_CHECK_EQUAL((boost::format("%hhu") % value).str(), "456");
-    BOOST_CHECK_EQUAL((boost::format("%hu") % value).str(), "456");
-    BOOST_CHECK_EQUAL((boost::format("%lu") % value).str(), "456");
-    BOOST_CHECK_EQUAL((boost::format("%llu") % value).str(), "456");
-    BOOST_CHECK_EQUAL((boost::format("%ju") % value).str(), "456");
-    BOOST_CHECK_EQUAL((boost::format("%zu") % value).str(), "456");
-    BOOST_CHECK(boost::starts_with((boost::format("%Lf") % value).str(), "456"));
+    BOOST_TEST_EQ((boost::format("%hhu") % value).str(), "456");
+    BOOST_TEST_EQ((boost::format("%hu") % value).str(), "456");
+    BOOST_TEST_EQ((boost::format("%lu") % value).str(), "456");
+    BOOST_TEST_EQ((boost::format("%llu") % value).str(), "456");
+    BOOST_TEST_EQ((boost::format("%ju") % value).str(), "456");
+    BOOST_TEST_EQ((boost::format("%zu") % value).str(), "456");
+    BOOST_TEST(boost::starts_with((boost::format("%Lf") % value).str(), "456"));
 
 #if !defined(BOOST_NO_STD_LOCALE)
     // boolalpha support
@@ -165,51 +162,51 @@ int test_main(int, char* [])
     // Demonstrates how to modify the default string to something else
     std::locale custom(std::locale(), new custom_tf);
     boost::ignore_unused(locale::global(custom));
-    BOOST_CHECK_EQUAL((boost::format("%b") % false).str(), "NEGATIVE");
-    BOOST_CHECK_EQUAL((boost::format("%b") % true).str(), "POSITIVE");
+    BOOST_TEST_EQ((boost::format("%b") % false).str(), "NEGATIVE");
+    BOOST_TEST_EQ((boost::format("%b") % true).str(), "POSITIVE");
 
     // restore system default
     locale::global(loc);
-    BOOST_CHECK_EQUAL((boost::format("%b") % false).str(), punk.falsename());
-    BOOST_CHECK_EQUAL((boost::format("%b") % true).str(), punk.truename());
+    BOOST_TEST_EQ((boost::format("%b") % false).str(), punk.falsename());
+    BOOST_TEST_EQ((boost::format("%b") % true).str(), punk.truename());
 #endif
 
     // Support for microsoft argument type specifiers: 'w' (same as 'l'), I, I32, I64
-    BOOST_CHECK_EQUAL((boost::format("%wc") % '5').str(), "5");
-    BOOST_CHECK_EQUAL((boost::format("%Id") % 123).str(), "123");
-    BOOST_CHECK_EQUAL((boost::format("%I32d") % 456).str(), "456");
-    BOOST_CHECK_EQUAL((boost::format("%I64d") % 789).str(), "789");
+    BOOST_TEST_EQ((boost::format("%wc") % '5').str(), "5");
+    BOOST_TEST_EQ((boost::format("%Id") % 123).str(), "123");
+    BOOST_TEST_EQ((boost::format("%I32d") % 456).str(), "456");
+    BOOST_TEST_EQ((boost::format("%I64d") % 789).str(), "789");
 
     // issue-36 volatile (and const) keyword
     volatile int vint = 1234567;
-    BOOST_CHECK_EQUAL((boost::format("%1%") % vint).str(), "1234567");
+    BOOST_TEST_EQ((boost::format("%1%") % vint).str(), "1234567");
     volatile const int vcint = 7654321;
-    BOOST_CHECK_EQUAL((boost::format("%1%") % vcint).str(), "7654321");
+    BOOST_TEST_EQ((boost::format("%1%") % vcint).str(), "7654321");
 
     // skip width if '*'
-    BOOST_CHECK_EQUAL((boost::format("%*d") % vint).str(), "1234567");
+    BOOST_TEST_EQ((boost::format("%*d") % vint).str(), "1234567");
 
     // internal ios flag
-    BOOST_CHECK_EQUAL((boost::format("%_6d") % -77).str(), "-   77");
+    BOOST_TEST_EQ((boost::format("%_6d") % -77).str(), "-   77");
 
     // combining some flags
-    BOOST_CHECK_EQUAL((boost::format("%+05.5d"  ) %  77).str(), "+0077");
-    BOOST_CHECK_EQUAL((boost::format("%+ 5.5d"  ) %  77).str(), "  +77");
-    BOOST_CHECK_EQUAL((boost::format("%+_ 5.5d" ) %  77).str(), "+  77");
-    BOOST_CHECK_EQUAL((boost::format("%+- 5.5d" ) %  77).str(), "+77  ");
-    BOOST_CHECK_EQUAL((boost::format("%+05.5d"  ) % -77).str(), "-0077");
-    BOOST_CHECK_EQUAL((boost::format("%+ 5.5d"  ) % -77).str(), "  -77");
-    BOOST_CHECK_EQUAL((boost::format("%+_ 5.5d" ) % -77).str(), "-  77");
-    BOOST_CHECK_EQUAL((boost::format("%+- 5.5d" ) % -77).str(), "-77  ");
+    BOOST_TEST_EQ((boost::format("%+05.5d"  ) %  77).str(), "+0077");
+    BOOST_TEST_EQ((boost::format("%+ 5.5d"  ) %  77).str(), "  +77");
+    BOOST_TEST_EQ((boost::format("%+_ 5.5d" ) %  77).str(), "+  77");
+    BOOST_TEST_EQ((boost::format("%+- 5.5d" ) %  77).str(), "+77  ");
+    BOOST_TEST_EQ((boost::format("%+05.5d"  ) % -77).str(), "-0077");
+    BOOST_TEST_EQ((boost::format("%+ 5.5d"  ) % -77).str(), "  -77");
+    BOOST_TEST_EQ((boost::format("%+_ 5.5d" ) % -77).str(), "-  77");
+    BOOST_TEST_EQ((boost::format("%+- 5.5d" ) % -77).str(), "-77  ");
 
     // reuse state and reset format flags
     std::string mystr("abcdefghijklmnop");
-    BOOST_CHECK_EQUAL((boost::format("%2.2s %-4.4s % 8.8s")
+    BOOST_TEST_EQ((boost::format("%2.2s %-4.4s % 8.8s")
         % mystr % mystr % mystr).str(), "ab abcd  abcdefg");
 
-    // coverage
+    // coverage, operator =
     format fmt("%1%%2%%3%");
     fmt = fmt;
 
-    return 0;
+    return boost::report_errors();
 }

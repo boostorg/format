@@ -16,6 +16,28 @@ Branch          | Travis | Appveyor | Coverity Scan | codecov.io | Documentation
 [master](https://github.com/boostorg/format/tree/master) | [![Build Status](https://travis-ci.org/boostorg/format.svg?branch=master)](https://travis-ci.org/boostorg/format) | [![Build status](https://ci.appveyor.com/api/projects/status/tkcumf8nu6tb697d/branch/master?svg=true)](https://ci.appveyor.com/project/boostorg/format/branch/master) | [![Coverity Scan Build Status](https://scan.coverity.com/projects/14007/badge.svg)](https://scan.coverity.com/projects/boostorg-format) | [![codecov](https://codecov.io/gh/boostorg/format/branch/master/graph/badge.svg)](https://codecov.io/gh/boostorg/format/branch/master) | [![Documentation](https://img.shields.io/badge/documentation-master-brightgreen.svg)](http://www.boost.org/doc/libs/master/libs/format/) | [![Enter the Matrix](https://img.shields.io/badge/matrix-master-brightgreen.svg)](http://www.boost.org/development/tests/master/developer/format.html)
 [develop](https://github.com/boostorg/format/tree/develop) | [![Build Status](https://travis-ci.org/boostorg/format.svg?branch=develop)](https://travis-ci.org/boostorg/format) | [![Build status](https://ci.appveyor.com/api/projects/status/tkcumf8nu6tb697d/branch/develop?svg=true)](https://ci.appveyor.com/project/boostorg/format/branch/develop) | | [![codecov](https://codecov.io/gh/boostorg/format/branch/develop/graph/badge.svg)](https://codecov.io/gh/boostorg/format/branch/develop) | [![Documentation](https://img.shields.io/badge/documentation-develop-brightgreen.svg)](http://www.boost.org/doc/libs/develop/libs/format/) | [![Enter the Matrix](https://img.shields.io/badge/matrix-develop-brightgreen.svg)](http://www.boost.org/development/tests/develop/developer/format.html)
 
+### Dependencies
+
+Boost.Format depends on the following Boost libraries:
+
+* assert
+* config
+* core
+* optional
+* smart_ptr
+* throw_exception
+* utility
+
+Boost.Format examples depend on the following Boost Libraries (in addition to dependencies listed above):
+
+* io
+* numeric
+
+Boost.Format tests depend on the following Boost Libraries (in addition to dependencies listed above):
+
+* algorithm
+* predef
+
 ### Directories
 
 * **benchmark** - Performance comparison of Boost.Format to printf

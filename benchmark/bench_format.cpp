@@ -134,7 +134,7 @@ void test_try1()
   boost::io::basic_oaltstringstream<char> oss;
   oss << boost::format(fstring) % arg1 % arg2 % arg3;
   boost::timer chrono;
-  int dummy=0;
+  size_t dummy=0;
   for(int i=0; i<NTests; ++i) {
       dummy += oss.cur_size();
   }
@@ -156,7 +156,7 @@ void test_try2()
   oss << s << s;
   s = oss.cur_str();
   boost::timer chrono;
-  int dummy=0;
+  size_t dummy=0;
   for(int i=0; i<NTests; ++i) {
       dummy += oss.cur_size();
   }

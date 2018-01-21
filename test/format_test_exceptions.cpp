@@ -10,24 +10,20 @@
 
 // ------------------------------------------------------------------------------
 
-#define BOOST_FORMAT_STATIC_STREAM
-#include "boost/format.hpp"
-
 #include <boost/algorithm/string.hpp>
-#include <iostream>
+#include <boost/detail/lightweight_test.hpp>
+#include <boost/format.hpp>
 #include <iomanip>
+#include <iostream>
 
-#define BOOST_INCLUDE_MAIN
-#include <boost/test/test_tools.hpp>
+#define CHECK_INVALID_0(FMT, EX) { BOOST_TEST_THROWS((boost::format(FMT)).str(), EX); \
+    boost::format safe; safe.exceptions(boost::io::no_error_bits); safe.parse(FMT); (safe).str(); }
+#define CHECK_INVALID_1(FMT, _1, EX) { BOOST_TEST_THROWS((boost::format(FMT) % _1).str(), EX); \
+    boost::format safe; safe.exceptions(boost::io::no_error_bits); safe.parse(FMT); (safe % _1).str(); }
+#define CHECK_INVALID_2(FMT, _1, _2, EX) { BOOST_TEST_THROWS((boost::format(FMT) % _1 % _2).str(), EX); \
+    boost::format safe; safe.exceptions(boost::io::no_error_bits); safe.parse(FMT); (safe % _1 % _2).str(); }
 
-#define CHECK_INVALID_0(FMT, EX) { BOOST_CHECK_THROW((boost::format(FMT)).str(), EX); \
-    boost::format safe; safe.exceptions(boost::io::no_error_bits); BOOST_CHECK_NO_THROW(safe.parse(FMT)); BOOST_CHECK_NO_THROW((safe).str()); }
-#define CHECK_INVALID_1(FMT, _1, EX) { BOOST_CHECK_THROW((boost::format(FMT) % _1).str(), EX); \
-    boost::format safe; safe.exceptions(boost::io::no_error_bits); BOOST_CHECK_NO_THROW(safe.parse(FMT)); BOOST_CHECK_NO_THROW((safe % _1).str()); }
-#define CHECK_INVALID_2(FMT, _1, _2, EX) { BOOST_CHECK_THROW((boost::format(FMT) % _1 % _2).str(), EX); \
-    boost::format safe; safe.exceptions(boost::io::no_error_bits); BOOST_CHECK_NO_THROW(safe.parse(FMT)); BOOST_CHECK_NO_THROW((safe % _1 % _2).str()); }
-
-int test_main(int, char* [])
+int main(int, char* [])
 {
     using namespace boost::io;
 
@@ -77,33 +73,33 @@ int test_main(int, char* [])
 
     // test what() on exceptions
     format_error base_err;
-    BOOST_CHECK_GT(strlen(base_err.what()), 0u);
+    BOOST_TEST_GT(strlen(base_err.what()), 0u);
 
     bad_format_string bfs(2, 3);
-    BOOST_CHECK(boost::contains(bfs.what(), "bad_format_string"));
+    BOOST_TEST(boost::contains(bfs.what(), "bad_format_string"));
 
     too_few_args tfa(5, 4);
-    BOOST_CHECK(boost::contains(tfa.what(), "format-string"));
+    BOOST_TEST(boost::contains(tfa.what(), "format-string"));
 
     too_many_args tma(4, 5);
-    BOOST_CHECK(boost::contains(tma.what(), "format-string"));
+    BOOST_TEST(boost::contains(tma.what(), "format-string"));
 
     boost::io::out_of_range oor(1, 2, 3);
-    BOOST_CHECK(boost::contains(oor.what(), "out_of_range"));
+    BOOST_TEST(boost::contains(oor.what(), "out_of_range"));
 
     // bind and unbind
     boost::format two("%1%, %2%");
     two.bind_arg(1, 1);
     two.bind_arg(2, 2);
-    BOOST_CHECK_EQUAL(two.str(), "1, 2");
+    BOOST_TEST_EQ(two.str(), "1, 2");
 
-    BOOST_CHECK_NO_THROW(two.clear_bind(1));
-    BOOST_CHECK_THROW(two.str(), too_few_args);
-    BOOST_CHECK_THROW(two.clear_bind(1), boost::io::out_of_range);
+    two.clear_bind(1);
+    BOOST_TEST_THROWS(two.str(), too_few_args);
+    BOOST_TEST_THROWS(two.clear_bind(1), boost::io::out_of_range);
     two.exceptions(no_error_bits);
-    BOOST_CHECK_NO_THROW(two.clear_bind(1));
-    BOOST_CHECK_NO_THROW(two.str());
+    two.clear_bind(1);
+    two.str();
 
-    return 0;
+    return boost::report_errors();
 }
 
