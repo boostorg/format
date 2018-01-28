@@ -1,6 +1,6 @@
 #! /bin/bash
 #
-# Copyright 2017 James E. King, III
+# Copyright 2017 James E. King III
 # Distributed under the Boost Software License, Version 1.0.
 # (See accompanying file LICENSE_1_0.txt or copy at
 #      http://www.boost.org/LICENSE_1_0.txt)
@@ -20,10 +20,8 @@ set -ex
 B2_VARIANT=debug
 ci/build.sh cxxflags=-fprofile-arcs cxxflags=-ftest-coverage linkflags=-fprofile-arcs linkflags=-ftest-coverage
 
-#
 # switch back to the original source code directory
 # this ensures codecov doesn't get confused
-#
 cd $TRAVIS_BUILD_DIR
 
 # get the version of lcov

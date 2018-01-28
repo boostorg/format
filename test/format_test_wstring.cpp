@@ -10,15 +10,11 @@
 
 // ------------------------------------------------------------------------------
 
-#include "boost/format.hpp"
+#include <boost/detail/lightweight_test.hpp>
+#include <boost/format.hpp>
 
-#define BOOST_INCLUDE_MAIN 
-#include <boost/test/test_tools.hpp>
-
-
-int test_main(int, char* [])
+int main(int, char* [])
 {
-
   using boost::format;
   using boost::str;
 
@@ -33,12 +29,12 @@ int test_main(int, char* [])
   // testcase for https://svn.boost.org/trac10/ticket/7379 (for valgrind)
   wformat wfmt(L"%1$.1f");
   std::wstring ws = str(wfmt % 123.45f);
-  BOOST_CHECK_EQUAL(ws.compare(L"123.4"), 0);
+  BOOST_TEST_EQ(ws.compare(L"123.4"), 0);
   wformat wfmt2(L"%1$.0f %%");
   std::wstring ws2 = (wfmt2 % 123.45f).str();
-  BOOST_CHECK_EQUAL(ws2.compare(L"123 %"), 0);
+  BOOST_TEST_EQ(ws2.compare(L"123 %"), 0);
 
 #endif // wformat tests
 
-  return 0;
+  return boost::report_errors();
 }

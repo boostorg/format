@@ -10,14 +10,10 @@
 
 // ------------------------------------------------------------------------------
 
-#define BOOST_FORMAT_STATIC_STREAM
-#include "boost/format.hpp"
-
+#include <boost/detail/lightweight_test.hpp>
+#include <boost/format.hpp>
 #include <iostream>
 #include <iomanip>
-
-#define BOOST_INCLUDE_MAIN
-#include <boost/test/test_tools.hpp>
 
 struct Rational {
   int n,d;
@@ -29,7 +25,7 @@ std::ostream& operator<<( std::ostream& os, const Rational& r) {
   return os;
 }
 
-int test_main(int, char* [])
+int main(int, char* [])
 {
     using namespace std;
     using boost::format;
@@ -97,18 +93,18 @@ int test_main(int, char* [])
     {
         boost::format bf("%1% %4% %1%");
         bf.bind_arg(1, "one") % 2 % "three" ;
-        BOOST_CHECK_EQUAL(bf.expected_args(), 4);
-        BOOST_CHECK_EQUAL(bf.fed_args(), 2);
-        BOOST_CHECK_EQUAL(bf.bound_args(), 1);
-        BOOST_CHECK_EQUAL(bf.remaining_args(), 1);
-        BOOST_CHECK_EQUAL(bf.cur_arg(), 4);
+        BOOST_TEST_EQ(bf.expected_args(), 4);
+        BOOST_TEST_EQ(bf.fed_args(), 2);
+        BOOST_TEST_EQ(bf.bound_args(), 1);
+        BOOST_TEST_EQ(bf.remaining_args(), 1);
+        BOOST_TEST_EQ(bf.cur_arg(), 4);
         bf.clear_binds();
         bf % "one" % 2 % "three" ;
-        BOOST_CHECK_EQUAL(bf.expected_args(), 4);
-        BOOST_CHECK_EQUAL(bf.fed_args(), 3);
-        BOOST_CHECK_EQUAL(bf.bound_args(), 0);
-        BOOST_CHECK_EQUAL(bf.remaining_args(), 1);
-        BOOST_CHECK_EQUAL(bf.cur_arg(), 4);
+        BOOST_TEST_EQ(bf.expected_args(), 4);
+        BOOST_TEST_EQ(bf.fed_args(), 3);
+        BOOST_TEST_EQ(bf.bound_args(), 0);
+        BOOST_TEST_EQ(bf.remaining_args(), 1);
+        BOOST_TEST_EQ(bf.cur_arg(), 4);
     }
     // testcase for bug reported at
     // http://lists.boost.org/boost-users/2006/05/19723.php
@@ -123,12 +119,12 @@ int test_main(int, char* [])
     // http://lists.boost.org/boost-users/2005/11/15454.php
     std::string l_param;
     std::string l_str = (boost::format("here is an empty string: %1%") % l_param).str();
-    BOOST_CHECK_EQUAL(std::string("here is an empty string: "), l_str);
+    BOOST_TEST_EQ(std::string("here is an empty string: "), l_str);
 
     // testcase for SourceForge bug #1506914
     std::string arg; // empty string
     s = str(format("%=8s") % arg);
-    BOOST_CHECK_EQUAL(std::string("        "), s);
+    BOOST_TEST_EQ(std::string("        "), s);
 
-    return 0;
+    return boost::report_errors();
 }
