@@ -255,10 +255,20 @@ namespace boost {
                 if(0 < add_size) {
                     new_size += add_size;
 #ifdef _RWSTD_NO_CLASS_PARTIAL_SPEC
+  #ifdef BOOST_NO_CXX11_ALLOCATOR
                     void *vdptr = alloc_.allocate(new_size, is_allocated_? oldptr : 0);
+  #else
+                    void *vdptr = std::allocator_traits<compat_allocator_type>::allocate(
+                        alloc_, new_size, is_allocated_? oldptr : 0);
+  #endif
                     newptr = static_cast<Ch *>(vdptr);
 #else
+  #ifdef BOOST_NO_CXX11_ALLOCATOR
                     newptr = alloc_.allocate(new_size, is_allocated_? oldptr : 0);
+  #else
+                    newptr = std::allocator_traits<compat_allocator_type>::allocate(
+                        alloc_, new_size, is_allocated_? oldptr : 0);
+  #endif
 #endif
                 }
 
