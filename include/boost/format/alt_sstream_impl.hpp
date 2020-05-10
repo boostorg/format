@@ -257,6 +257,8 @@ namespace boost {
 #ifdef _RWSTD_NO_CLASS_PARTIAL_SPEC
                     void *vdptr = alloc_.allocate(new_size, is_allocated_? oldptr : 0);
                     newptr = static_cast<Ch *>(vdptr);
+#elif (__cplusplus >= 201703L)
+                    newptr = alloc_.allocate(new_size);
 #else
                     newptr = alloc_.allocate(new_size, is_allocated_? oldptr : 0);
 #endif
