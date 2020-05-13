@@ -41,7 +41,7 @@ namespace boost {
                 void *vd_ptr = alloc_.allocate(sz, is_allocated_? eback() : 0);
                 Ch *new_ptr = static_cast<Ch *>(vd_ptr);
 #else
-                Ch *new_ptr = alloc_.allocate(sz, is_allocated_? eback() : 0);
+                Ch *new_ptr = alloc_.allocate(sz);
 #endif
                 // if this didnt throw, we're safe, update the buffer
                 dealloc();
@@ -258,7 +258,7 @@ namespace boost {
                     void *vdptr = alloc_.allocate(new_size, is_allocated_? oldptr : 0);
                     newptr = static_cast<Ch *>(vdptr);
 #else
-                    newptr = alloc_.allocate(new_size, is_allocated_? oldptr : 0);
+                    newptr = alloc_.allocate(new_size);
 #endif
                 }
 
