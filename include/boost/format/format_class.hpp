@@ -161,8 +161,8 @@ namespace boost {
         void make_or_reuse_data(std::size_t nbitems);// used for (re-)initialisation
 
         // member data --------------------------------------------//
-        std::vector<format_item_t>  items_; // each '%..' directive leads to a format_item
-        std::vector<bool> bound_; // stores which arguments were bound. size() == 0 || num_args
+        std::vector<format_item_t, Alloc>  items_; // each '%..' directive leads to a format_item
+        std::vector<bool, Alloc> bound_; // stores which arguments were bound. size() == 0 || num_args
 
         int              style_; // style of format-string :  positional or not, etc
         int             cur_arg_; // keep track of wich argument is current
