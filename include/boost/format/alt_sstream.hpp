@@ -138,6 +138,7 @@ namespace boost {
             typedef basic_altstringbuf<Ch, Tr, Alloc>   stringbuf_t;
         public:
             typedef Alloc  allocator_type;
+            ~basic_oaltstringstream() noexcept override = default;
             basic_oaltstringstream() 
                 : pbase_type(new stringbuf_t), stream_t(pbase_type::member.get())
                 { }
