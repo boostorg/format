@@ -19,6 +19,5 @@ comment:
 # Ignore specific files or folders. Glob patterns are supported.
 # See https://docs.codecov.com/docs/ignoring-paths
 ignore:
-  - extra/**/*
-  - libs/format/test
-  - test/**/*
+  - libs/format/test/
+  - test/
