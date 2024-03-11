@@ -13,6 +13,7 @@ project
 
 exe format_matrix 
     : format_matrix.cpp
+	  /boost/filesystem//boost_filesystem
 	  /boost/program_options//boost_program_options
 	  /boost/system//boost_system
     ;

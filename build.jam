@@ -1,0 +1,35 @@
+# Copyright René Ferdinand Rivera Morell 2023
+# Distributed under the Boost Software License, Version 1.0.
+# (See accompanying file LICENSE_1_0.txt or copy at
+# http://www.boost.org/LICENSE_1_0.txt)
+
+import project ;
+
+project /boost/format
+    : common-requirements
+        <source>/boost/assert//boost_assert
+        <source>/boost/config//boost_config
+        <source>/boost/core//boost_core
+        <source>/boost/optional//boost_optional
+        <source>/boost/smart_ptr//boost_smart_ptr
+        <source>/boost/throw_exception//boost_throw_exception
+        <source>/boost/utility//boost_utility
+        <include>include
+    ;
+
+explicit
+    [ alias boost_format ]
+    [ alias all
+        :   boost_format
+            benchmark
+            example
+            test
+            tools
+        :   <warnings>pedantic
+            <toolset>clang:<cxxflags>-ansi
+            <toolset>gcc:<cxxflags>-ansi
+        ]
+    ;
+
+call-if : boost-library format
+    ;
