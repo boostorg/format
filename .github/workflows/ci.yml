@@ -43,49 +43,47 @@ jobs:
       matrix:
         include:
           # Linux, gcc
-          - { compiler: gcc-4.4,   cxxstd: '98,0x',          os: ubuntu-20.04, container: 'ubuntu:16.04' }
-          - { compiler: gcc-4.6,   cxxstd: '03,0x',          os: ubuntu-20.04, container: 'ubuntu:16.04' }
-          - { compiler: gcc-4.7,   cxxstd: '03,11',          os: ubuntu-20.04, container: 'ubuntu:16.04' }
-          - { compiler: gcc-4.8,   cxxstd: '03,11',          os: ubuntu-18.04 }
-          - { compiler: gcc-4.9,   cxxstd: '03,11',          os: ubuntu-20.04, container: 'ubuntu:16.04' }
-          - { compiler: gcc-5,     cxxstd: '03,11,14,1z',    os: ubuntu-18.04 }
-          - { compiler: gcc-6,     cxxstd: '03,11,14,17',    os: ubuntu-18.04 }
-          - { compiler: gcc-7,     cxxstd: '03,11,14,17',    os: ubuntu-18.04 }
-          - { compiler: gcc-8,     cxxstd: '03,11,14,17,2a', os: ubuntu-18.04 }
-          - { compiler: gcc-9,     cxxstd: '03,11,14,17,2a', os: ubuntu-18.04 }
-          - { compiler: gcc-10,    cxxstd: '03,11,14,17,20', os: ubuntu-20.04 }
-          - { compiler: gcc-11,    cxxstd: '03,11,14,17,20', os: ubuntu-20.04 }
+          - { compiler: gcc-4.7,   cxxstd: '11',          os: ubuntu-20.04, container: 'ubuntu:16.04' }
+          - { compiler: gcc-4.8,   cxxstd: '11',          os: ubuntu-18.04 }
+          - { compiler: gcc-4.9,   cxxstd: '11',          os: ubuntu-20.04, container: 'ubuntu:16.04' }
+          - { compiler: gcc-5,     cxxstd: '11,14,1z',    os: ubuntu-18.04 }
+          - { compiler: gcc-6,     cxxstd: '11,14,17',    os: ubuntu-18.04 }
+          - { compiler: gcc-7,     cxxstd: '11,14,17',    os: ubuntu-18.04 }
+          - { compiler: gcc-8,     cxxstd: '11,14,17,2a', os: ubuntu-18.04 }
+          - { compiler: gcc-9,     cxxstd: '11,14,17,2a', os: ubuntu-18.04 }
+          - { compiler: gcc-10,    cxxstd: '11,14,17,20', os: ubuntu-20.04 }
+          - { compiler: gcc-11,    cxxstd: '11,14,17,20', os: ubuntu-20.04 }
           - { name: GCC w/ sanitizers, sanitize: yes,
-              compiler: gcc-11,    cxxstd: '03,11,14,17,20', os: ubuntu-20.04 }
+              compiler: gcc-11,    cxxstd: '11,14,17,20', os: ubuntu-20.04 }
           - { name: Collect coverage, coverage: yes,
-              compiler: gcc-10,    cxxstd: '03,11',          os: ubuntu-20.04, install: 'g++-10-multilib', address-model: '32,64' }
+              compiler: gcc-10,    cxxstd: '11',          os: ubuntu-20.04, install: 'g++-10-multilib', address-model: '32,64' }
 
           # Linux, clang
-          - { compiler: clang-3.5, cxxstd: '03,11',          os: ubuntu-20.04, container: 'ubuntu:16.04' }
-          - { compiler: clang-3.6, cxxstd: '03,11,14',       os: ubuntu-20.04, container: 'ubuntu:16.04' }
-          - { compiler: clang-3.7, cxxstd: '03,11,14',       os: ubuntu-20.04, container: 'ubuntu:16.04' }
-          - { compiler: clang-3.8, cxxstd: '03,11,14',       os: ubuntu-20.04, container: 'ubuntu:16.04' }
-          - { compiler: clang-3.9, cxxstd: '03,11,14',       os: ubuntu-18.04 }
-          - { compiler: clang-4.0, cxxstd: '03,11,14',       os: ubuntu-18.04 }
-          - { compiler: clang-5.0, cxxstd: '03,11,14,1z',    os: ubuntu-18.04 }
-          - { compiler: clang-6.0, cxxstd: '03,11,14,17',    os: ubuntu-18.04 }
-          - { compiler: clang-7,   cxxstd: '03,11,14,17',    os: ubuntu-18.04 }
+          - { compiler: clang-3.5, cxxstd: '11',          os: ubuntu-20.04, container: 'ubuntu:16.04' }
+          - { compiler: clang-3.6, cxxstd: '11,14',       os: ubuntu-20.04, container: 'ubuntu:16.04' }
+          - { compiler: clang-3.7, cxxstd: '11,14',       os: ubuntu-20.04, container: 'ubuntu:16.04' }
+          - { compiler: clang-3.8, cxxstd: '11,14',       os: ubuntu-20.04, container: 'ubuntu:16.04' }
+          - { compiler: clang-3.9, cxxstd: '11,14',       os: ubuntu-18.04 }
+          - { compiler: clang-4.0, cxxstd: '11,14',       os: ubuntu-18.04 }
+          - { compiler: clang-5.0, cxxstd: '11,14,1z',    os: ubuntu-18.04 }
+          - { compiler: clang-6.0, cxxstd: '11,14,17',    os: ubuntu-18.04 }
+          - { compiler: clang-7,   cxxstd: '11,14,17',    os: ubuntu-18.04 }
           # Note: clang-8 does not fully support C++20, so it is not compatible with some libstdc++ versions in this mode
-          - { compiler: clang-8,   cxxstd: '03,11,14,17,2a', os: ubuntu-18.04, install: 'clang-8 g++-7', gcc_toolchain: 7 }
-          - { compiler: clang-9,   cxxstd: '03,11,14,17,2a', os: ubuntu-20.04 }
-          - { compiler: clang-10,  cxxstd: '03,11,14,17,20', os: ubuntu-20.04 }
-          - { compiler: clang-11,  cxxstd: '03,11,14,17,20', os: ubuntu-20.04 }
+          - { compiler: clang-8,   cxxstd: '11,14,17,2a', os: ubuntu-18.04, install: 'clang-8 g++-7', gcc_toolchain: 7 }
+          - { compiler: clang-9,   cxxstd: '11,14,17,2a', os: ubuntu-20.04 }
+          - { compiler: clang-10,  cxxstd: '11,14,17,20', os: ubuntu-20.04 }
+          - { compiler: clang-11,  cxxstd: '11,14,17,20', os: ubuntu-20.04 }
           - { name: Clang w/ valgrind, valgrind: yes,
-              compiler: clang-12,  cxxstd: '03,11,14,17,20', os: ubuntu-20.04, install: 'valgrind' }
+              compiler: clang-12,  cxxstd: '11,14,17,20', os: ubuntu-20.04, install: 'valgrind' }
 
           # libc++
-          - { compiler: clang-6.0, cxxstd: '03,11,14',       os: ubuntu-18.04, stdlib: libc++, install: 'clang-6.0 libc++-dev libc++abi-dev' }
-          - { compiler: clang-12,  cxxstd: '03,11,14,17,20', os: ubuntu-20.04, stdlib: libc++, install: 'clang-12 libc++-12-dev libc++abi-12-dev' }
+          - { compiler: clang-6.0, cxxstd: '11,14',       os: ubuntu-18.04, stdlib: libc++, install: 'clang-6.0 libc++-dev libc++abi-dev' }
+          - { compiler: clang-12,  cxxstd: '11,14,17,20', os: ubuntu-20.04, stdlib: libc++, install: 'clang-12 libc++-12-dev libc++abi-12-dev' }
           - { name: Clang w/ sanitizers, sanitize: yes,
-              compiler: clang-12,  cxxstd: '03,11,14,17,20', os: ubuntu-20.04, stdlib: libc++, install: 'clang-12 libc++-12-dev libc++abi-12-dev' }
+              compiler: clang-12,  cxxstd: '11,14,17,20', os: ubuntu-20.04, stdlib: libc++, install: 'clang-12 libc++-12-dev libc++abi-12-dev' }
 
           # OSX, clang
-          - { compiler: clang,     cxxstd: '03,11,14,17,2a', os: macos-10.15, sanitize: yes }
+          - { compiler: clang,     cxxstd: '11,14,17,2a', os: macos-10.15, sanitize: yes }
 
           # Coverity Scan
           # requires two github secrets in repo to activate; see ci/github/coverity.sh
@@ -94,7 +92,7 @@ jobs:
               compiler: clang-10,  cxxstd: '17',             os: ubuntu-20.04, ccache: no }
 
           # multiarch (bigendian testing) - does not support coverage yet
-          # format has no endian compile-itme branches
+          # format has no endian compile-time branches so this is unnecessary
           # - { name: Big-endian, multiarch: yes,
           #     compiler: clang,     cxxstd: '17',             os: ubuntu-20.04, ccache: no, distro: fedora, edition: 34, arch: s390x }
 
@@ -131,13 +129,13 @@ jobs:
             fi
             git config --global pack.threads 0
 
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           # For coverage builds fetch the whole history, else only 1 commit using a 'fake ternary'
           fetch-depth: ${{ matrix.coverage && '0' || '1' }}
 
       - name: Cache ccache
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         if: env.B2_USE_CCACHE
         with:
           path: ~/.ccache
@@ -147,7 +145,7 @@ jobs:
             ${{matrix.os}}-${{matrix.container}}-${{matrix.compiler}}
 
       - name: Fetch Boost.CI
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           repository: boostorg/boost-ci
           ref: master
@@ -227,9 +225,21 @@ jobs:
         if: '!matrix.coverity'
         run: ci/build.sh
 
-      - name: Upload coverage
+      - name: Collect coverage
         if: matrix.coverage
         run: ci/codecov.sh "upload"
+        env:
+          BOOST_CI_CODECOV_IO_UPLOAD: skip
+
+      - name: Upload coverage
+        if: matrix.coverage
+        uses: codecov/codecov-action@v4
+        with:
+          disable_search: true
+          file: coverage.info
+          name: Github Actions
+          token: ${{secrets.CODECOV_TOKEN}}
+          verbose: true
 
       - name: Run coverity
         if: matrix.coverity && github.event_name == 'push' && (github.ref_name == 'develop' || github.ref_name == 'master')
@@ -249,15 +259,15 @@ jobs:
           - { toolset: msvc-14.2, cxxstd: '14,17,20',       addrmd: '32,64', os: windows-2019 }
           - { name: Collect coverage, coverage: yes,
               toolset: msvc-14.3, cxxstd: '14,17,20',       addrmd: '32,64', os: windows-2022 }
-          - { toolset: gcc,       cxxstd: '03,11,14,17,2a', addrmd: '64',    os: windows-2019 }
+          - { toolset: gcc,       cxxstd: '11,14,17,2a',    addrmd: '64',    os: windows-2019 }
 
     runs-on: ${{matrix.os}}
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
       - name: Fetch Boost.CI
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           repository: boostorg/boost-ci
           ref: master
@@ -279,7 +289,7 @@ jobs:
           B2_CXXSTD: ${{matrix.cxxstd}}
           B2_ADDRESS_MODEL: ${{matrix.addrmd}}
 
-      - name: Run coverage
+      - name: Collect coverage
         shell: powershell
         if: matrix.coverage
         run: ci\opencppcoverage.ps1
@@ -290,9 +300,13 @@ jobs:
 
       - name: Upload coverage
         if: matrix.coverage
-        uses: codecov/codecov-action@v2
+        uses: codecov/codecov-action@v4
         with:
-          files: __out/cobertura.xml
+          disable_search: true
+          file: __out/cobertura.xml
+          name: Github Actions
+          token: ${{secrets.CODECOV_TOKEN}}
+          verbose: true
 
   CMake:
     defaults:
@@ -312,10 +326,10 @@ jobs:
     runs-on: ${{matrix.os}}
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
       - name: Fetch Boost.CI
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           repository: boostorg/boost-ci
           ref: master
