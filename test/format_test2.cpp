@@ -204,9 +204,14 @@ int main(int, char* [])
     BOOST_TEST_EQ((boost::format("%2.2s %-4.4s % 8.8s")
         % mystr % mystr % mystr).str(), "ab abcd  abcdefg");
 
-    // coverage, operator =
+    // coverage, operator =, copy constructor
     format fmt("%1%%2%%3%");
-    fmt = fmt;
+    format fmt2;
+    fmt2 = fmt;
+    format fmt3(fmt);
+    BOOST_TEST_EQ((fmt % 'a' % 'b' % 'c').str(), "abc");
+    BOOST_TEST_EQ((fmt2 % 'b' % 'c' % 'd').str(), "bcd");
+    BOOST_TEST_EQ((fmt3 % 'c' % 'd' % 'e').str(), "cde");
 
     return boost::report_errors();
 }
