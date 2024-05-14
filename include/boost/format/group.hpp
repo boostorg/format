@@ -34,9 +34,15 @@ namespace detail {
 
 
 // empty group, but useful even though.
-struct group0 
+struct group0
 {
-    group0()      {}
+    BOOST_FORCEINLINE group0() {}
+#if !defined(BOOST_NO_CXX11_DELETED_FUNCTIONS)
+    group0& operator=(const group0&) = delete;
+#else
+private:
+    group0& operator=(const group0&);
+#endif
 };
 
 template <class Ch, class Tr>
@@ -49,14 +55,12 @@ operator << ( BOOST_IO_STD basic_ostream<Ch, Tr>& os,
 }
 
 template <class T1>
-struct group1
+struct group1 : group0
 {
     T1 a1_;
-    group1(T1 a1)
-      : a1_(a1)
+    BOOST_FORCEINLINE group1(T1 a1)
+      : group0(), a1_(a1)
       {}
-private:
-   group1& operator=(const group1&);
 };
 
 template <class Ch, class Tr, class T1>
@@ -73,15 +77,12 @@ operator << (BOOST_IO_STD basic_ostream<Ch, Tr>& os,
 
 
 template <class T1,class T2>
-struct group2
+struct group2 : group1<T1>
 {
-    T1 a1_;
     T2 a2_;
-    group2(T1 a1,T2 a2)
-      : a1_(a1),a2_(a2)
+    BOOST_FORCEINLINE group2(T1 a1, T2 a2)
+      : group1<T1>(a1), a2_(a2)
       {}
-private:
-   group2& operator=(const group2&);
 };
 
 template <class Ch, class Tr, class T1,class T2>
@@ -95,16 +96,12 @@ operator << (BOOST_IO_STD basic_ostream<Ch, Tr>& os,
 }
 
 template <class T1,class T2,class T3>
-struct group3
+struct group3 : group2<T1, T2>
 {
-    T1 a1_;
-    T2 a2_;
     T3 a3_;
-    group3(T1 a1,T2 a2,T3 a3)
-      : a1_(a1),a2_(a2),a3_(a3)
+    BOOST_FORCEINLINE group3(T1 a1,T2 a2,T3 a3)
+      : group2<T1, T2>(a1, a2), a3_(a3)
       {}
-private:
-   group3& operator=(const group3&);
 };
 
 template <class Ch, class Tr, class T1,class T2,class T3>
@@ -118,17 +115,12 @@ operator << (BOOST_IO_STD basic_ostream<Ch, Tr>& os,
 }
 
 template <class T1,class T2,class T3,class T4>
-struct group4
+struct group4 : group3<T1, T2, T3>
 {
-    T1 a1_;
-    T2 a2_;
-    T3 a3_;
     T4 a4_;
-    group4(T1 a1,T2 a2,T3 a3,T4 a4)
-      : a1_(a1),a2_(a2),a3_(a3),a4_(a4)
+    BOOST_FORCEINLINE group4(T1 a1,T2 a2,T3 a3,T4 a4)
+      : group3<T1, T2, T3>(a1, a2, a3), a4_(a4)
       {}
-private:
-   group4& operator=(const group4&);
 };
 
 template <class Ch, class Tr, class T1,class T2,class T3,class T4>
@@ -142,15 +134,11 @@ operator << (BOOST_IO_STD basic_ostream<Ch, Tr>& os,
 }
 
 template <class T1,class T2,class T3,class T4,class T5>
-struct group5
+struct group5 : group4<T1, T2, T3, T4>
 {
-    T1 a1_;
-    T2 a2_;
-    T3 a3_;
-    T4 a4_;
     T5 a5_;
-    group5(T1 a1,T2 a2,T3 a3,T4 a4,T5 a5)
-      : a1_(a1),a2_(a2),a3_(a3),a4_(a4),a5_(a5)
+    BOOST_FORCEINLINE group5(T1 a1,T2 a2,T3 a3,T4 a4,T5 a5)
+      : group4<T1, T2, T3, T4>(a1, a2, a3, a4), a5_(a5)
       {}
 };
 
@@ -165,16 +153,11 @@ operator << (BOOST_IO_STD basic_ostream<Ch, Tr>& os,
 }
 
 template <class T1,class T2,class T3,class T4,class T5,class T6>
-struct group6
+struct group6 : group5<T1, T2, T3, T4, T5>
 {
-    T1 a1_;
-    T2 a2_;
-    T3 a3_;
-    T4 a4_;
-    T5 a5_;
     T6 a6_;
-    group6(T1 a1,T2 a2,T3 a3,T4 a4,T5 a5,T6 a6)
-      : a1_(a1),a2_(a2),a3_(a3),a4_(a4),a5_(a5),a6_(a6)
+    BOOST_FORCEINLINE group6(T1 a1,T2 a2,T3 a3,T4 a4,T5 a5,T6 a6)
+      : group5<T1, T2, T3, T4, T5>(a1, a2, a3, a4, a5), a6_(a6)
       {}
 };
 
@@ -189,17 +172,11 @@ operator << (BOOST_IO_STD basic_ostream<Ch, Tr>& os,
 }
 
 template <class T1,class T2,class T3,class T4,class T5,class T6,class T7>
-struct group7
+struct group7 : group6<T1, T2, T3, T4, T5, T6>
 {
-    T1 a1_;
-    T2 a2_;
-    T3 a3_;
-    T4 a4_;
-    T5 a5_;
-    T6 a6_;
     T7 a7_;
-    group7(T1 a1,T2 a2,T3 a3,T4 a4,T5 a5,T6 a6,T7 a7)
-      : a1_(a1),a2_(a2),a3_(a3),a4_(a4),a5_(a5),a6_(a6),a7_(a7)
+    BOOST_FORCEINLINE group7(T1 a1,T2 a2,T3 a3,T4 a4,T5 a5,T6 a6,T7 a7)
+      : group6<T1, T2, T3, T4, T5, T6>(a1, a2, a3, a4, a5, a6), a7_(a7)
       {}
 };
 
@@ -214,18 +191,11 @@ operator << (BOOST_IO_STD basic_ostream<Ch, Tr>& os,
 }
 
 template <class T1,class T2,class T3,class T4,class T5,class T6,class T7,class T8>
-struct group8
+struct group8 : group7<T1, T2, T3, T4, T5, T6, T7>
 {
-    T1 a1_;
-    T2 a2_;
-    T3 a3_;
-    T4 a4_;
-    T5 a5_;
-    T6 a6_;
-    T7 a7_;
     T8 a8_;
-    group8(T1 a1,T2 a2,T3 a3,T4 a4,T5 a5,T6 a6,T7 a7,T8 a8)
-      : a1_(a1),a2_(a2),a3_(a3),a4_(a4),a5_(a5),a6_(a6),a7_(a7),a8_(a8)
+    BOOST_FORCEINLINE group8(T1 a1,T2 a2,T3 a3,T4 a4,T5 a5,T6 a6,T7 a7,T8 a8)
+      : group7<T1, T2, T3, T4, T5, T6, T7>(a1, a2, a3, a4, a5, a6, a7), a8_(a8)
       {}
 };
 
@@ -240,19 +210,11 @@ operator << (BOOST_IO_STD basic_ostream<Ch, Tr>& os,
 }
 
 template <class T1,class T2,class T3,class T4,class T5,class T6,class T7,class T8,class T9>
-struct group9
+struct group9 : group8<T1, T2, T3, T4, T5, T6, T7, T8>
 {
-    T1 a1_;
-    T2 a2_;
-    T3 a3_;
-    T4 a4_;
-    T5 a5_;
-    T6 a6_;
-    T7 a7_;
-    T8 a8_;
     T9 a9_;
-    group9(T1 a1,T2 a2,T3 a3,T4 a4,T5 a5,T6 a6,T7 a7,T8 a8,T9 a9)
-      : a1_(a1),a2_(a2),a3_(a3),a4_(a4),a5_(a5),a6_(a6),a7_(a7),a8_(a8),a9_(a9)
+    BOOST_FORCEINLINE group9(T1 a1,T2 a2,T3 a3,T4 a4,T5 a5,T6 a6,T7 a7,T8 a8,T9 a9)
+      : group8<T1, T2, T3, T4, T5, T6, T7, T8>(a1, a2, a3, a4, a5, a6, a7, a8), a9_(a9)
       {}
 };
 
@@ -267,20 +229,11 @@ operator << (BOOST_IO_STD basic_ostream<Ch, Tr>& os,
 }
 
 template <class T1,class T2,class T3,class T4,class T5,class T6,class T7,class T8,class T9,class T10>
-struct group10
+struct group10 : group9<T1, T2, T3, T4, T5, T6, T7, T8, T9>
 {
-    T1 a1_;
-    T2 a2_;
-    T3 a3_;
-    T4 a4_;
-    T5 a5_;
-    T6 a6_;
-    T7 a7_;
-    T8 a8_;
-    T9 a9_;
     T10 a10_;
-    group10(T1 a1,T2 a2,T3 a3,T4 a4,T5 a5,T6 a6,T7 a7,T8 a8,T9 a9,T10 a10)
-      : a1_(a1),a2_(a2),a3_(a3),a4_(a4),a5_(a5),a6_(a6),a7_(a7),a8_(a8),a9_(a9),a10_(a10)
+    BOOST_FORCEINLINE group10(T1 a1,T2 a2,T3 a3,T4 a4,T5 a5,T6 a6,T7 a7,T8 a8,T9 a9,T10 a10)
+      : group9<T1, T2, T3, T4, T5, T6, T7, T8, T9>(a1, a2, a3, a4, a5, a6, a7, a8, a9), a10_(a10)
       {}
 };
 

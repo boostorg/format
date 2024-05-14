@@ -5,19 +5,29 @@
 #  Use, modification, and distribution are subject to the
 #  Boost Software License, Version 1.0. (See accompanying file
 #  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+#
+# desired, but...
+# gcc.compile.c++ bin.v2/libs/format/test/format_test1.test/gcc-10/debug/x86_64/cxxstd-03-iso/threading-multi/visibility-hidden/format_test1.o
+# In file included from ./boost/preprocessor/facilities/overload.hpp:17,
+#                  from ./boost/preprocessor/tuple/elem.hpp:21,
+#                  from ./boost/preprocessor/array/data.hpp:16,
+#                  from ./boost/preprocessor/array/elem.hpp:15,
+#                  from ./boost/preprocessor/iteration/iterate.hpp:17,
+#                  from ./boost/utility/result_of.hpp:31,
+#                  from ./boost/optional/optional.hpp:63,
+#                  from ./boost/optional.hpp:15,
+#                  from ./boost/format/internals.hpp:21,
+#                  from ./boost/format.hpp:38,
+#                  from libs/format/test/format_test1.cpp:14:
+# ./boost/preprocessor/variadic/size.hpp:48:39: error: anonymous variadic macros were introduced in C++11 [-Werror=variadic-macros]
+#    48 | #       define BOOST_PP_VARIADIC_SIZE(...) BOOST_PP_VARIADIC_DO_SIZE(__VA_ARGS__)
+#       |                                       ^~~
+#
+#       <warnings-as-errors>on
 
 project
     : requirements
-
-      <warnings>all
-
-      <toolset>clang:<cxxflags>-Wextra
-      <toolset>clang:<cxxflags>-ansi
-      <toolset>clang:<cxxflags>-pedantic
-
-      <toolset>gcc:<cxxflags>-Wextra
-      <toolset>gcc:<cxxflags>-ansi
-      <toolset>gcc:<cxxflags>-pedantic
+        <warnings>pedantic
     ;
 
 # please order by name to ease maintenance
