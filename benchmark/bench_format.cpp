@@ -141,7 +141,8 @@ void test_try1()
   boost::timer::nanosecond_type t = chrono.elapsed().wall;
   cout  << left << setw(20) <<"try1 time"<< right <<":" << setw(5) << t
         << ",  = " << t / tpf << " * printf "
-        << ",  = " << t / tstream << " * nullStream \n";
+        << ",  = " << t / tstream << " * nullStream"
+        << ", accum = " << dummy << endl;
 }
 
 void test_try2()
@@ -163,7 +164,8 @@ void test_try2()
   boost::timer::nanosecond_type t = chrono.elapsed().wall;
   cout  << left << setw(20) <<"try2 time"<< right <<":" << setw(5) << t
         << ",  = " << t / tpf << " * printf "
-        << ",  = " << t / tstream << " * nullStream \n";
+        << ",  = " << t / tstream << " * nullStream"
+        << ", accum = " << dummy << endl;
 }
 
 void do_stream(std::ostream& os) {
