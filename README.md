@@ -9,10 +9,6 @@ Distributed under the [Boost Software License, Version 1.0](http://www.boost.org
 * C++11
 * Header-only
 
-### Dependencies
-
-Direct dependencies for `boost::format` branches: [`master`](https://pdimov.github.io/boostdep-report/master/format.html), [`develop`](https://pdimov.github.io/boostdep-report/develop/format.html) provided by boostdep-report.
-
 ### Build Status
 
 Branch          | GHA CI | Appveyor | Coverity Scan | codecov.io | Deps | Docs | Tests |
