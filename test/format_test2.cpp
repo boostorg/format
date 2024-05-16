@@ -130,7 +130,8 @@ int main(int, char* [])
     // specific so we're just going to do minimal checking...
     double dbl = 1234567.890123f;
 
-#if (__cplusplus >= 201103L) || (BOOST_VERSION_NUMBER_MAJOR(BOOST_COMP_MSVC) >= 12)
+#if !defined(__MINGW32__) && ((__cplusplus >= 201103L) || (BOOST_VERSION_NUMBER_MAJOR(BOOST_COMP_MSVC) >= 12))
+    // mingw32 does not have support for hexfloat but does set __cplusplus to a C++11 value
     // msvc-12.0 and later have support for hexfloat but do not set __cplusplus to a C++11 value
     BOOST_TEST(boost::starts_with((boost::format("%A") % dbl).str(), "0X"));
     BOOST_TEST(boost::starts_with((boost::format("%a") % dbl).str(), "0x"));
