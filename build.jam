@@ -28,8 +28,7 @@ explicit
             test
             tools
         :   <warnings>pedantic
-            <toolset>clang:<cxxflags>-ansi
-            <toolset>gcc:<cxxflags>-ansi
+            <warnings-as-errors>on
         ]
     ;
 
