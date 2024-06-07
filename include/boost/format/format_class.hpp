@@ -29,7 +29,6 @@ namespace boost {
     template<class Ch, class Tr, class Alloc>
     class basic_format 
     {
-        typedef typename io::CompatTraits<Tr>::compatible_type compat_traits;  
     public:
         typedef Ch  CharT;   // borland fails in operator% if we use Ch and Tr directly
         typedef std::basic_string<Ch, Tr, Alloc>              string_type;

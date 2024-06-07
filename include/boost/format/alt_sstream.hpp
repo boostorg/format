@@ -17,7 +17,7 @@
 
 #include <string>
 #include <boost/core/allocator_access.hpp>
-#include <boost/format/detail/compat_workarounds.hpp>
+#include <boost/format/detail/config_macros.hpp>
 #include <boost/utility/base_from_member.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/config.hpp>
@@ -40,14 +40,12 @@ namespace boost {
             : public ::std::basic_streambuf<Ch, Tr>
         {
             typedef ::std::basic_streambuf<Ch, Tr>  streambuf_t;
-            typedef typename CompatAlloc<Alloc>::compatible_type compat_allocator_type;
-            typedef typename CompatTraits<Tr>::compatible_type   compat_traits_type;
         public:
             typedef Ch     char_type;
             typedef Tr     traits_type;
-            typedef typename compat_traits_type::int_type     int_type;
-            typedef typename compat_traits_type::pos_type     pos_type;
-            typedef typename compat_traits_type::off_type     off_type;
+            typedef typename Tr::int_type     int_type;
+            typedef typename Tr::pos_type     pos_type;
+            typedef typename Tr::off_type     off_type;
             typedef Alloc                     allocator_type;
             typedef ::std::basic_string<Ch, Tr, Alloc> string_type;
             typedef typename string_type::size_type    size_type;
@@ -104,8 +102,8 @@ namespace boost {
                                       ::std::ios_base::openmode which 
                                       = ::std::ios_base::in | ::std::ios_base::out);
             virtual int_type underflow();
-            virtual int_type pbackfail(int_type meta = compat_traits_type::eof());
-            virtual int_type overflow(int_type meta = compat_traits_type::eof());
+            virtual int_type pbackfail(int_type meta = Tr::eof());
+            virtual int_type overflow(int_type meta = Tr::eof());
             void dealloc();
         private:
             enum { alloc_min = 256}; // minimum size of allocations
@@ -113,7 +111,7 @@ namespace boost {
             Ch *putend_;  // remembers (over seeks) the highest value of pptr()
             bool is_allocated_;
             ::std::ios_base::openmode mode_;
-            compat_allocator_type alloc_;  // the allocator object
+            Alloc alloc_;  // the allocator object
         };
 
 

@@ -20,7 +20,7 @@
 #include <boost/core/ignore_unused.hpp>
 #include <boost/optional.hpp>
 #include <boost/limits.hpp>
-#include <boost/format/detail/compat_workarounds.hpp>
+#include <boost/format/detail/config_macros.hpp>
 #include <boost/format/alt_sstream.hpp> // used as a dummy stream
 
 namespace boost {
