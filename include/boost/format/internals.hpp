@@ -16,6 +16,7 @@
 
 
 #include <string>
+#include <ios>
 #include <boost/assert.hpp>
 #include <boost/core/ignore_unused.hpp>
 #include <boost/optional.hpp>

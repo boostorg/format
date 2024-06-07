@@ -16,6 +16,8 @@
 #define BOOST_SK_ALT_SSTREAM_HPP
 
 #include <string>
+#include <ostream>
+#include <streambuf>
 #include <boost/core/allocator_access.hpp>
 #include <boost/format/detail/config_macros.hpp>
 #include <boost/utility/base_from_member.hpp>
