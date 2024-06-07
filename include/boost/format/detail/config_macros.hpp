@@ -22,8 +22,7 @@
 
 // make sure our local macros wont override something :
 #if defined(BOOST_NO_LOCALE_ISDIGIT) || defined(BOOST_OVERLOAD_FOR_NON_CONST) \
-  || defined(BOOST_IO_STD) || defined( BOOST_IO_NEEDS_USING_DECLARATION ) \
-    || defined(BOOST_NO_TEMPLATE_STD_STREAM)
+  || defined(BOOST_IO_STD) || defined( BOOST_IO_NEEDS_USING_DECLARATION )
 #error "boost::format uses a local macro that is already defined."
 #endif
 

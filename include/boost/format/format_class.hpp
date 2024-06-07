@@ -124,17 +124,10 @@ namespace boost {
     && !BOOST_WORKAROUND(__DECCXX_VER, BOOST_TESTED_AT(60590042))
         // use friend templates and private members only if supported
 
-#ifndef  BOOST_NO_TEMPLATE_STD_STREAM
         template<class Ch2, class Tr2, class Alloc2>
         friend std::basic_ostream<Ch2, Tr2> & 
         operator<<( std::basic_ostream<Ch2, Tr2> & ,
                     const basic_format<Ch2, Tr2, Alloc2>& );
-#else
-        template<class Ch2, class Tr2, class Alloc2>
-        friend std::ostream & 
-        operator<<( std::ostream & ,
-                    const basic_format<Ch2, Tr2, Alloc2>& );
-#endif
 
         template<class Ch2, class Tr2, class Alloc2, class T>  
         friend basic_format<Ch2, Tr2, Alloc2>&  
