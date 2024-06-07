@@ -30,7 +30,8 @@ namespace boost {
     class basic_format 
     {
     public:
-        typedef Ch  CharT;   // borland fails in operator% if we use Ch and Tr directly
+        typedef Ch  CharT;        // borland fails in operator% if we use Ch and Tr directly
+        typedef Tr  CharTraitsT;  //
         typedef std::basic_string<Ch, Tr, Alloc>              string_type;
         typedef typename string_type::size_type               size_type;
         typedef io::detail::format_item<Ch, Tr, Alloc>        format_item_t;
@@ -60,34 +61,34 @@ namespace boost {
         // ** arguments passing ** //
         template<class T>  
         basic_format&   operator%(const T& x)
-            { return io::detail::feed<CharT, Tr, Alloc, const T&>(*this,x); }
+            { return io::detail::feed<CharT, CharTraitsT, Alloc, const T&>(*this,x); }
 
 #ifndef BOOST_NO_OVERLOAD_FOR_NON_CONST
         template<class T>  basic_format&   operator%(T& x) 
-            { return io::detail::feed<CharT, Tr, Alloc, T&>(*this,x); }
+            { return io::detail::feed<CharT, CharTraitsT, Alloc, T&>(*this,x); }
 #endif
 
         template<class T>
         basic_format& operator%(volatile const T& x)
             { /* make a non-volatile copy */ const T v(x);
-              /* pass the copy along      */ return io::detail::feed<CharT, Tr, Alloc, const T&>(*this, v); }
+              /* pass the copy along      */ return io::detail::feed<CharT, CharTraitsT, Alloc, const T&>(*this, v); }
 
 #ifndef BOOST_NO_OVERLOAD_FOR_NON_CONST
         template<class T>
         basic_format& operator%(volatile T& x)
             { /* make a non-volatile copy */ T v(x);
-              /* pass the copy along      */ return io::detail::feed<CharT, Tr, Alloc, T&>(*this, v); }
+              /* pass the copy along      */ return io::detail::feed<CharT, CharTraitsT, Alloc, T&>(*this, v); }
 #endif
 
 #if defined(__GNUC__)
         // GCC can't handle anonymous enums without some help
         // ** arguments passing ** //
         basic_format&   operator%(const int& x)
-            { return io::detail::feed<CharT, Tr, Alloc, const int&>(*this,x); }
+            { return io::detail::feed<CharT, CharTraitsT, Alloc, const int&>(*this,x); }
 
 #ifndef BOOST_NO_OVERLOAD_FOR_NON_CONST
         basic_format&   operator%(int& x)
-            { return io::detail::feed<CharT, Tr, Alloc, int&>(*this,x); }
+            { return io::detail::feed<CharT, CharTraitsT, Alloc, int&>(*this,x); }
 #endif
 #endif
 
