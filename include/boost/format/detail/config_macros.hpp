@@ -22,15 +22,12 @@
 
 // make sure our local macros wont override something :
 #if defined(BOOST_NO_LOCALE_ISDIGIT) || defined(BOOST_OVERLOAD_FOR_NON_CONST) \
-  || defined(BOOST_IO_STD) || defined( BOOST_IO_NEEDS_USING_DECLARATION ) \
-    || defined(BOOST_NO_TEMPLATE_STD_STREAM) \
-    || defined(BOOST_FORMAT_STREAMBUF_DEFINED) || defined(BOOST_FORMAT_OSTREAM_DEFINED)
+  || defined(BOOST_IO_STD) || defined( BOOST_IO_NEEDS_USING_DECLARATION )
 #error "boost::format uses a local macro that is already defined."
 #endif
 
 // specific workarounds. each header can define BOOS_IO_STD if it 
 // needs. (e.g. because of IO_NEEDS_USING_DECLARATION)
-#include <boost/format/detail/workarounds_gcc-2_95.hpp>
 #include <boost/format/detail/workarounds_stlport.hpp>
 
 #ifndef BOOST_IO_STD

@@ -27,17 +27,10 @@ namespace boost {
          using ::boost::str; // keep compatibility with when it was defined in this N.S.
     }   // - namespace io
 
-#ifndef  BOOST_NO_TEMPLATE_STD_STREAM
-        template<class Ch, class Tr, class Alloc>
-        std::basic_ostream<Ch, Tr> & 
-        operator<<( std::basic_ostream<Ch, Tr> & os,
-                    const basic_format<Ch, Tr, Alloc>& f)
-#else
-        template<class Ch, class Tr, class Alloc>
-        std::ostream & 
-        operator<<( std::ostream & os,
-                    const basic_format<Ch, Tr, Alloc>& f)
-#endif
+    template<class Ch, class Tr, class Alloc>
+    std::basic_ostream<Ch, Tr> & 
+    operator<<( std::basic_ostream<Ch, Tr> & os,
+                const basic_format<Ch, Tr, Alloc>& f)
         // effect: "return os << str(f);" but we can do it faster
     {
         typedef boost::basic_format<Ch, Tr, Alloc>   format_t;
