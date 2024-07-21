@@ -8,7 +8,7 @@
 import testing ;
 
 project : requirements
-    <source>/boost/algorithm//boost_algorithm
+    <library>/boost/algorithm//boost_algorithm
     ;
 
 test-suite "format"
