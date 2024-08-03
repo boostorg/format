@@ -8,6 +8,7 @@
 
 project
     : requirements
+        <library>/boost/format//boost_format
         <library>/boost/timer//boost_timer
         <toolset>msvc:<define>_CRT_SECURE_NO_WARNINGS
     ;

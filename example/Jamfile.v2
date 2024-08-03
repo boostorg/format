@@ -7,6 +7,8 @@
 
 import testing ;
 
+project : requirements <library>/boost/format//boost_format ;
+
 test-suite "format-examples"
    :    [ run sample_advanced.cpp ]
         [ run sample_formats.cpp ]

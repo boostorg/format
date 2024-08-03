@@ -8,6 +8,7 @@
 import testing ;
 
 project : requirements
+    <library>/boost/format//boost_format
     <library>/boost/algorithm//boost_algorithm
     ;
 
