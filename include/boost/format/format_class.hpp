@@ -23,6 +23,7 @@
 #include <boost/format/internals_fwd.hpp>
 #include <boost/format/internals.hpp>
 #include <boost/format/alt_sstream.hpp>
+#include <boost/core/allocator_access.hpp>
 
 namespace boost {
 
@@ -161,8 +162,8 @@ namespace boost {
         void make_or_reuse_data(std::size_t nbitems);// used for (re-)initialisation
 
         // member data --------------------------------------------//
-        std::vector<format_item_t>  items_; // each '%..' directive leads to a format_item
-        std::vector<bool> bound_; // stores which arguments were bound. size() == 0 || num_args
+        std::vector<format_item_t, typename boost::allocator_rebind<Alloc, format_item_t>::type >  items_; // each '%..' directive leads to a format_item
+        std::vector<bool, typename boost::allocator_rebind<Alloc, bool>::type > bound_; // stores which arguments were bound. size() == 0 || num_args
 
         int              style_; // style of format-string :  positional or not, etc
         int             cur_arg_; // keep track of wich argument is current
