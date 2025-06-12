@@ -42,7 +42,7 @@ namespace boost {
         explicit basic_format(const string_type& s);
         basic_format(const basic_format& x);
         basic_format& operator= (const basic_format& x);
-        void swap(basic_format& x);
+        void swap(basic_format& x) noexcept;
 
 #if !defined(BOOST_NO_STD_LOCALE)
         explicit basic_format(const Ch* str, const std::locale & loc);
