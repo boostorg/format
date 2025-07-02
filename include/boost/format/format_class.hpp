@@ -29,9 +29,9 @@ namespace boost {
     template<class Ch, class Tr, class Alloc>
     class basic_format 
     {
-        typedef typename io::CompatTraits<Tr>::compatible_type compat_traits;  
     public:
-        typedef Ch  CharT;   // borland fails in operator% if we use Ch and Tr directly
+        typedef Ch  CharT;        // borland fails in operator% if we use Ch and Tr directly
+        typedef Tr  CharTraitsT;  //
         typedef std::basic_string<Ch, Tr, Alloc>              string_type;
         typedef typename string_type::size_type               size_type;
         typedef io::detail::format_item<Ch, Tr, Alloc>        format_item_t;
@@ -61,34 +61,34 @@ namespace boost {
         // ** arguments passing ** //
         template<class T>  
         basic_format&   operator%(const T& x)
-            { return io::detail::feed<CharT, Tr, Alloc, const T&>(*this,x); }
+            { return io::detail::feed<CharT, CharTraitsT, Alloc, const T&>(*this,x); }
 
 #ifndef BOOST_NO_OVERLOAD_FOR_NON_CONST
         template<class T>  basic_format&   operator%(T& x) 
-            { return io::detail::feed<CharT, Tr, Alloc, T&>(*this,x); }
+            { return io::detail::feed<CharT, CharTraitsT, Alloc, T&>(*this,x); }
 #endif
 
         template<class T>
         basic_format& operator%(volatile const T& x)
             { /* make a non-volatile copy */ const T v(x);
-              /* pass the copy along      */ return io::detail::feed<CharT, Tr, Alloc, const T&>(*this, v); }
+              /* pass the copy along      */ return io::detail::feed<CharT, CharTraitsT, Alloc, const T&>(*this, v); }
 
 #ifndef BOOST_NO_OVERLOAD_FOR_NON_CONST
         template<class T>
         basic_format& operator%(volatile T& x)
             { /* make a non-volatile copy */ T v(x);
-              /* pass the copy along      */ return io::detail::feed<CharT, Tr, Alloc, T&>(*this, v); }
+              /* pass the copy along      */ return io::detail::feed<CharT, CharTraitsT, Alloc, T&>(*this, v); }
 #endif
 
 #if defined(__GNUC__)
         // GCC can't handle anonymous enums without some help
         // ** arguments passing ** //
         basic_format&   operator%(const int& x)
-            { return io::detail::feed<CharT, Tr, Alloc, const int&>(*this,x); }
+            { return io::detail::feed<CharT, CharTraitsT, Alloc, const int&>(*this,x); }
 
 #ifndef BOOST_NO_OVERLOAD_FOR_NON_CONST
         basic_format&   operator%(int& x)
-            { return io::detail::feed<CharT, Tr, Alloc, int&>(*this,x); }
+            { return io::detail::feed<CharT, CharTraitsT, Alloc, int&>(*this,x); }
 #endif
 #endif
 
@@ -124,17 +124,10 @@ namespace boost {
     && !BOOST_WORKAROUND(__DECCXX_VER, BOOST_TESTED_AT(60590042))
         // use friend templates and private members only if supported
 
-#ifndef  BOOST_NO_TEMPLATE_STD_STREAM
         template<class Ch2, class Tr2, class Alloc2>
         friend std::basic_ostream<Ch2, Tr2> & 
         operator<<( std::basic_ostream<Ch2, Tr2> & ,
                     const basic_format<Ch2, Tr2, Alloc2>& );
-#else
-        template<class Ch2, class Tr2, class Alloc2>
-        friend std::ostream & 
-        operator<<( std::ostream & ,
-                    const basic_format<Ch2, Tr2, Alloc2>& );
-#endif
 
         template<class Ch2, class Tr2, class Alloc2, class T>  
         friend basic_format<Ch2, Tr2, Alloc2>&  

@@ -185,19 +185,19 @@ namespace boost {
         basic_altstringbuf<Ch, Tr, Alloc>:: 
         underflow () {
             if(gptr() == NULL) // no get area -> nothing to get.
-                return (compat_traits_type::eof()); 
+                return (Tr::eof()); 
             else if(gptr() < egptr())  // ok, in buffer
-                return (compat_traits_type::to_int_type(*gptr())); 
+                return (Tr::to_int_type(*gptr())); 
             else if(mode_ & ::std::ios_base::in && pptr() != NULL
                     && (gptr() < pptr() || gptr() < putend_) )
                 {  // expand get area 
                     if(putend_ < pptr()) 
                         putend_ = pptr(); // remember pptr reached this far
                     streambuf_t::setg(eback(), gptr(), putend_);
-                    return (compat_traits_type::to_int_type(*gptr()));
+                    return (Tr::to_int_type(*gptr()));
                 }
             else // couldnt get anything. EOF.
-                return (compat_traits_type::eof());
+                return (Tr::eof());
         }
         // -end underflow(..)
 
@@ -208,16 +208,16 @@ namespace boost {
         pbackfail (int_type meta) {
             if(gptr() != NULL  &&  (eback() < gptr()) 
                && (mode_ & (::std::ios_base::out)
-                   || compat_traits_type::eq_int_type(compat_traits_type::eof(), meta)
-                   || compat_traits_type::eq(compat_traits_type::to_char_type(meta), gptr()[-1]) ) ) { 
+                   || Tr::eq_int_type(Tr::eof(), meta)
+                   || Tr::eq(Tr::to_char_type(meta), gptr()[-1]) ) ) { 
                 streambuf_t::gbump(-1); // back one character
-                if(!compat_traits_type::eq_int_type(compat_traits_type::eof(), meta))
+                if(!Tr::eq_int_type(Tr::eof(), meta))
                     //  put-back meta into get area
-                    *gptr() = compat_traits_type::to_char_type(meta);
-                return (compat_traits_type::not_eof(meta));
+                    *gptr() = Tr::to_char_type(meta);
+                return (Tr::not_eof(meta));
             }
             else
-                return (compat_traits_type::eof());  // failed putback
+                return (Tr::eof());  // failed putback
         }
         // -end pbackfail(..)
 
@@ -230,15 +230,15 @@ namespace boost {
 #pragma warning(push)
 #pragma warning(disable:4996)
 #endif
-            if(compat_traits_type::eq_int_type(compat_traits_type::eof(), meta))
-                return compat_traits_type::not_eof(meta); // nothing to do
+            if(Tr::eq_int_type(Tr::eof(), meta))
+                return Tr::not_eof(meta); // nothing to do
             else if(pptr() != NULL && pptr() < epptr()) {
-                streambuf_t::sputc(compat_traits_type::to_char_type(meta));
+                streambuf_t::sputc(Tr::to_char_type(meta));
                 return meta;
             }
             else if(! (mode_ & ::std::ios_base::out)) 
                 // no write position, and cant make one
-                return compat_traits_type::eof(); 
+                return Tr::eof(); 
             else { // make a write position available
                 std::size_t prev_size = pptr() == NULL ? 0 : epptr() - eback();
                 std::size_t new_size = prev_size;
@@ -263,7 +263,7 @@ namespace boost {
                 }
 
                 if(0 < prev_size)
-                    compat_traits_type::copy(newptr, oldptr, prev_size);
+                    Tr::copy(newptr, oldptr, prev_size);
                 if(is_allocated_)
                     alloc_.deallocate(oldptr, prev_size);
                 is_allocated_=true;
@@ -287,7 +287,7 @@ namespace boost {
                     else
                         streambuf_t::setg(newptr, 0, newptr);
                 }
-                streambuf_t::sputc(compat_traits_type::to_char_type(meta));
+                streambuf_t::sputc(Tr::to_char_type(meta));
                 return meta;
             }
 #ifdef BOOST_MSVC
