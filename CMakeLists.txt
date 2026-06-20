@@ -27,6 +27,17 @@ target_compile_features(boost_format INTERFACE cxx_std_11)
 
 if(BUILD_TESTING AND EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/test/CMakeLists.txt")
 
-  add_subdirectory(test)
+  if(CMAKE_SOURCE_DIR STREQUAL PROJECT_SOURCE_DIR)
+
+    message(STATUS "Using CMake version ${CMAKE_VERSION}")
+
+    set(Boost_DEBUG ON)
+    find_package(Boost 1.85 CONFIG REQUIRED COMPONENTS assert config core optional smart_ptr throw_exception utility)
+
+  endif()
+
+  # Follow the Boost convention: don't build test targets by default,
+  # and only when explicitly requested by building target tests
+  add_subdirectory(test EXCLUDE_FROM_ALL)
 
 endif()
