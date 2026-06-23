@@ -82,7 +82,7 @@ namespace boost {
     }
     template< class Ch, class Tr, class Alloc>
     void  basic_format<Ch, Tr, Alloc>:: 
-    swap (basic_format & x) noexcept {
+    swap (basic_format & x) BOOST_NOEXCEPT_IF(BOOST_NOEXCEPT_EXPR(this->items_.swap(x.items_))) {
         std::swap(exceptions_, x.exceptions_);
         std::swap(style_, x.style_); 
         std::swap(cur_arg_, x.cur_arg_); 
