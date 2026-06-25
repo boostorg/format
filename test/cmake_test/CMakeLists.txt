@@ -12,7 +12,10 @@ if(BOOST_CI_INSTALL_TEST)
     # CMake config for header-only library is not installed with B2
     if(BOOST_CI_INSTALLED_BY STREQUAL "B2")
         find_package(Boost REQUIRED)
-        add_library(Boost::format ALIAS Boost::headers)
+        # Add compat target
+        add_library(Boost_format INTERFACE)
+        target_link_libraries(Boost_format INTERFACE Boost::headers)
+        add_library(Boost::format ALIAS Boost_format)
     else()
         find_package(boost_format REQUIRED)
     endif()
