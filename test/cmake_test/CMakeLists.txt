@@ -9,7 +9,16 @@ project(cmake_subdir_test LANGUAGES CXX)
 # Those 2 should work the same
 # while using find_package for the installed Boost avoids the need to manually specify dependencies
 if(BOOST_CI_INSTALL_TEST)
-    find_package(boost_format REQUIRED)
+    # CMake config for header-only library is not installed with B2
+    if(BOOST_CI_INSTALLED_BY STREQUAL "B2")
+        find_package(Boost REQUIRED)
+        # Add compat target
+        add_library(Boost_format INTERFACE)
+        target_link_libraries(Boost_format INTERFACE Boost::headers)
+        add_library(Boost::format ALIAS Boost_format)
+    else()
+        find_package(boost_format REQUIRED)
+    endif()
 else()
     set(BOOST_INCLUDE_LIBRARIES format)
     add_subdirectory(../../../.. deps/boost EXCLUDE_FROM_ALL)
