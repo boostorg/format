@@ -65,7 +65,7 @@ namespace detail {
     struct format_item 
     {     
         enum pad_values { zeropad = 1, spacepad =2, centered=4, tabulation = 8 };
-                         // 1. if zeropad is set, all other bits are not, 
+                         // 1. zeropad can be combined with spacepad,
                          // 2. if tabulation is set, all others are not.
                          // centered and spacepad can be mixed freely.
         enum arg_values { argN_no_posit   = -1, // non-positional directive. will set argN later
@@ -183,7 +183,6 @@ namespace detail {
               pad_scheme_ = pad_scheme_ & (~zeropad); 
             }
             else { 
-                pad_scheme_ &= ~spacepad; // printf ignores spacepad when zeropadding
                 fmtstate_.fill_='0'; 
                 fmtstate_.flags_ = (fmtstate_.flags_ & ~std::ios_base::adjustfield) 
                     | std::ios_base::internal;

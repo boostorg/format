@@ -189,6 +189,9 @@ namespace detail {
         const bool internal = (fl & std::ios_base::internal) != 0;
         const std::streamsize w = oss.width();
         const bool two_stepped_padding= internal && (w!=0);
+        // A zero truncation limit also removes the optional leading space.
+        const bool use_spacepad = (specs.pad_scheme_ & format_item_t::spacepad)
+            && specs.truncate_ > 0;
       
         res.resize(0);
         if(! two_stepped_padding) {
@@ -197,7 +200,7 @@ namespace detail {
             put_last( oss, x);
             const Ch * res_beg = buf.pbase();
             Ch prefix_space = 0;
-            if(specs.pad_scheme_ & format_item_t::spacepad)
+            if(use_spacepad)
                 if(buf.pcount()== 0 || 
                    (res_beg[0] !=oss.widen('+') && res_beg[0] !=oss.widen('-')  ))
                     prefix_space = oss.widen(' ');
@@ -215,7 +218,7 @@ namespace detail {
             const Ch * res_beg = buf.pbase();
             size_type res_size = buf.pcount();
             bool prefix_space=false;
-            if(specs.pad_scheme_ & format_item_t::spacepad)
+            if(use_spacepad)
                 if(buf.pcount()== 0 || 
                    (res_beg[0] !=oss.widen('+') && res_beg[0] !=oss.widen('-')  ))
                     prefix_space = true;
@@ -240,7 +243,7 @@ namespace detail {
                 if(prefix_space)
                     oss2 << ' ';
                 put_last(oss2, x );
-                if(buf.pcount()==0 && specs.pad_scheme_ & format_item_t::spacepad) {
+                if(buf.pcount()==0 && use_spacepad) {
                     prefix_space =true;
                     oss2 << ' ';
                 }

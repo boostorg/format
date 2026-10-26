@@ -34,6 +34,14 @@ int main(int, char* [])
   std::wstring ws2 = (wfmt2 % 123.45f).str();
   BOOST_TEST_EQ(ws2.compare(L"123 %"), 0);
 
+  BOOST_TEST(str(wformat(L"% 08d") % 12) == L" 0000012");
+  BOOST_TEST(str(wformat(L"%_ 08d") % 12) == L" 0000012");
+  BOOST_TEST(str(wformat(L"%= 08d") % 12) == L" 0000012");
+  BOOST_TEST(str(wformat(L"% 08d") % -12) == L"-0000012");
+  BOOST_TEST(str(wformat(L"% 0.0s") % L"abc") == L"");
+  BOOST_TEST(str(wformat(L"% 08.0s") % L"abc") == L"00000000");
+  BOOST_TEST(str(wformat(L"%_ 8.0s") % L"abc") == L"        ");
+
 #endif // wformat tests
 
   return boost::report_errors();
