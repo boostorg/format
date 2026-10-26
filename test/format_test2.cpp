@@ -126,6 +126,25 @@ int main(int, char* [])
       BOOST_ERROR("formatting error. (flag 0)");
     }
 
+    // Zero padding preserves a leading space for a nonnegative value.
+    BOOST_TEST_EQ(str(format("% 08d") % 12), " 0000012");
+    BOOST_TEST_EQ(str(format("%0 8d") % 12), " 0000012");
+    BOOST_TEST_EQ(str(format("%_ 08d") % 12), " 0000012");
+    BOOST_TEST_EQ(str(format("%= 08d") % 12), " 0000012");
+    BOOST_TEST_EQ(str(format("%- 08d") % 12), " 12     ");
+    BOOST_TEST_EQ(str(format("%+ 08d") % 12), "+0000012");
+    BOOST_TEST_EQ(str(format("% 08d") % -12), "-0000012");
+    BOOST_TEST_EQ(str(format("% 08d") % 0), " 0000000");
+    BOOST_TEST_EQ(str(format("% 02d") % 123), " 123");
+    BOOST_TEST_EQ(str(format("% 0d") % 12), " 12");
+    BOOST_TEST_EQ(str(format("% 08.2f") % 12.5), " 0012.50");
+    BOOST_TEST_EQ(str(format("% 08d") % r), " 00016/9");
+    BOOST_TEST_EQ(str(format("% 08d") % group(setfill('_'), 12)), " _____12");
+    BOOST_TEST_EQ(str(format("% 0.0s") % "abc"), "");
+    BOOST_TEST_EQ(str(format("% 08.0s") % "abc"), "00000000");
+    BOOST_TEST_EQ(str(format("%_ 8.0s") % "abc"), "        ");
+    BOOST_TEST_EQ(str(format("% .0s") % "abc"), "");
+
     // actually testing floating point output is implementation
     // specific so we're just going to do minimal checking...
     double dbl = 1234567.890123f;
